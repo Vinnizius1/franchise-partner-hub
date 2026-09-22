@@ -9,9 +9,9 @@ CREATE TABLE IF NOT EXISTS corporate_partners (
     units_count INTEGER NOT NULL DEFAULT 1,
     region TEXT NOT NULL CHECK (region IN ('Sudeste', 'Sul', 'Nordeste', 'Centro-Oeste', 'Norte')),
     account_manager TEXT NOT NULL,
-    last_interaction_at TIMESTAMPTZ DEFAULT now(),
-    created_at TIMESTAMPTZ DEFAULT now(),
-    updated_at TIMESTAMPTZ DEFAULT now()
+    last_interaction_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- 2. Habilitação Obrigatória de Segurança (RLS - Row Level Security)
