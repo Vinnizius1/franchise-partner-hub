@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS corporate_partners (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     company_name TEXT NOT NULL,
     cnpj TEXT UNIQUE NOT NULL,
-    segment TEXT NOT NULL,
+    segment TEXT NOT NULL CHECK (segment IN ('Alimentação', 'Moda & Calçados', 'Acessórios', 'Saúde & Beleza', 'Fitness', 'Educação', 'Serviços', 'Automotivo', 'Turismo')),
     status TEXT NOT NULL CHECK (status IN ('lead', 'negociacao', 'ativo', 'inadimplente', 'cancelado')),
     annual_revenue NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
     units_count INTEGER NOT NULL DEFAULT 1,
