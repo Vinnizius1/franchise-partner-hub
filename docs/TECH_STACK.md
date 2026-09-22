@@ -1,4 +1,4 @@
-﻿# Tech Stack - Franchise Partner Hub
+# Tech Stack - Franchise Partner Hub
 
 Este documento registra as versões exatas e validadas utilizadas no projeto, garantindo reprodutibilidade e prevenindo alucinações de versão por assistentes de IA (Context Dilution).
 
@@ -17,6 +17,5 @@ Este documento registra as versões exatas e validadas utilizadas no projeto, ga
 - **Client JS**: @supabase/supabase-js v2.116.0
 
 ## Gerenciamento de Estado & Validação
-- **URL State**: 
-uqs (para paginação e filtros via Search Params)
+- **URL State**: `nuqs` (para paginação e filtros via Search Params)
 - **Validação**: zod (para validação de Server Actions e formulários)

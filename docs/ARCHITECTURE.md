@@ -1,4 +1,4 @@
-﻿# Architecture & Decisions
+# Architecture & Decisions
 
 Este documento descreve as diretrizes arquiteturais e de engenharia adotadas na construção do **Franchise Partner Hub**.
 
@@ -18,8 +18,7 @@ Para o painel B2B corporativo (com alta densidade de dados privados), adotamos *
 
 ## 3. Estado na URL vs useState
 Filtros, pesquisa e paginação NÃO utilizam estado global (Redux/Zustand) ou useState. 
-Utilizamos a própria URL (Search Params) através da biblioteca 
-uqs.
+Utilizamos a própria URL (Search Params) através da biblioteca `nuqs`.
 ### O Sim (Vantagens):
 - O estado se torna compartilhável (links podem ser enviados para a equipe de gestão).
 - Permite manter o componente que consome os dados como um Server Component.
