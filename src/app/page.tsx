@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { PartnersTable } from "@/components/partners/partners-table";
 import { TableSkeleton } from "@/components/partners/table-skeleton";
-import { Building2, TrendingUp, ShieldCheck, Zap } from "lucide-react";
+import { KpiCards } from "@/components/partners/kpi-cards";
 
 export default function HomePage() {
   return (
@@ -30,8 +30,8 @@ export default function HomePage() {
 
           <div className="flex items-center gap-4 text-xs">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Supabase Postgres Live</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span>Supabase Postgres Conectado</span>
             </div>
           </div>
         </div>
@@ -39,54 +39,21 @@ export default function HomePage() {
 
       {/* 2. Conteúdo Principal */}
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        {/* Banner de Apresentação e KPIs */}
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
-            <div className="flex items-center justify-between text-zinc-400 mb-2">
-              <span className="text-xs font-medium">Franquias na Rede</span>
-              <Building2 className="w-4 h-4 text-blue-400" />
+        {/* Banner de KPIs Derivados Dinamicamente */}
+        <Suspense
+          fallback={
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 animate-pulse">
+              {[...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className="h-28 rounded-xl border border-zinc-800 bg-zinc-900/30"
+                />
+              ))}
             </div>
-            <div className="text-2xl font-bold font-mono text-zinc-100">15</div>
-            <p className="text-[11px] text-zinc-500 mt-1">
-              Top redes corporativas do Brasil
-            </p>
-          </div>
-
-          <div className="p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
-            <div className="flex items-center justify-between text-zinc-400 mb-2">
-              <span className="text-xs font-medium">Faturamento Total Gerenciado</span>
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
-            </div>
-            <div className="text-2xl font-bold font-mono text-emerald-400">
-              R$ 310,7M
-            </div>
-            <p className="text-[11px] text-zinc-500 mt-1">
-              Volume anual de LTV monitorado
-            </p>
-          </div>
-
-          <div className="p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
-            <div className="flex items-center justify-between text-zinc-400 mb-2">
-              <span className="text-xs font-medium">Segurança de Dados</span>
-              <ShieldCheck className="w-4 h-4 text-indigo-400" />
-            </div>
-            <div className="text-2xl font-bold text-zinc-100">RLS Ativo</div>
-            <p className="text-[11px] text-zinc-500 mt-1">
-              Políticas de leitura e atualização no Postgres
-            </p>
-          </div>
-
-          <div className="p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
-            <div className="flex items-center justify-between text-zinc-400 mb-2">
-              <span className="text-xs font-medium">Arquitetura de Entrega</span>
-              <Zap className="w-4 h-4 text-amber-400" />
-            </div>
-            <div className="text-2xl font-bold text-zinc-100">RSC + Streaming</div>
-            <p className="text-[11px] text-zinc-500 mt-1">
-              Largest Contentful Paint imediato via Suspense
-            </p>
-          </div>
-        </section>
+          }
+        >
+          <KpiCards />
+        </Suspense>
 
         {/* Bloco de Alta Densidade com Suspense Streaming */}
         <section className="space-y-4">

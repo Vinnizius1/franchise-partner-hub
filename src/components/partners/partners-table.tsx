@@ -10,6 +10,11 @@ import { Building2, MapPin, Calendar, DollarSign, Store } from "lucide-react";
  * diretamente do Supabase sem expor lógica de queries nem onerar o bundle JS do cliente.
  */
 export async function PartnersTable() {
+  // 🧪 [DEMO / APRESENTAÇÃO TÉCNICA]: Delay proposital de 1.5s
+  // Usado estritamente para demonstrar o poder do React Suspense + Progressive Streaming
+  // e o comportamento visual do Skeleton Loader sem travar o LCP da aplicação.
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+
   const supabase = await createClient();
 
   const { data: partners, error } = await supabase
@@ -21,7 +26,9 @@ export async function PartnersTable() {
     return (
       <div className="p-8 text-center border border-rose-500/20 rounded-xl bg-rose-500/5 text-rose-400">
         <p className="font-medium">Erro ao carregar dados do Supabase</p>
-        <p className="text-xs text-rose-500/80 mt-1 font-mono">{error.message}</p>
+        <p className="text-xs text-rose-500/80 mt-1 font-mono">
+          {error.message}
+        </p>
       </div>
     );
   }
@@ -58,7 +65,7 @@ export async function PartnersTable() {
               Redes & Franqueados Corporativos
             </h2>
             <p className="text-xs text-zinc-400">
-              Total de {partners?.length || 0} parceiros monitorados em tempo real
+              Total de {partners?.length || 0} parceiros consultados sob demanda (RSC)
             </p>
           </div>
         </div>

@@ -5,7 +5,10 @@ interface StatusBadgeProps {
   status: PartnerStatus;
 }
 
-const statusConfig: Record<PartnerStatus, { label: string; className: string }> = {
+const statusConfig: Record<
+  PartnerStatus,
+  { label: string; className: string }
+> = {
   ativo: {
     label: "Ativo",
     className: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
