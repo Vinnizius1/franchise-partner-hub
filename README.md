@@ -3,6 +3,10 @@
 > **Portal B2B Corporativo de Alta Performance para Gestão e Inteligência de Redes Franqueadoras.**  
 > Desenvolvido com **Next.js 16 (App Router & Turbopack)**, **React 19 Server Components**, **Supabase (PostgreSQL com RLS)**, **Vitest** e **Tailwind CSS v4**.
 
+<p align="center">
+  <img src="./docs/assets/dashboard-preview.png" alt="Franchise Partner Hub Dashboard Preview" width="100%" />
+</p>
+
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.3.5-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-19.2.8-blue?style=for-the-badge&logo=react)](https://react.dev/)
 [![TypeScript 5](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
@@ -17,8 +21,9 @@
 
 - 🚀 **Aplicação em Produção (Live Demo):** [https://franchise-partner-hub.vercel.app](https://franchise-partner-hub.vercel.app)
 - 📁 **Repositório Oficial:** [github.com/Vinnizius1/franchise-partner-hub](https://github.com/Vinnizius1/franchise-partner-hub)
+- 🏛️ **Arquitetura & Trade-offs:** [ARCHITECTURE.md](./ARCHITECTURE.md)
 - 👨‍💻 **Autor:** Vinicius Matos de Mendonça ([GitHub](https://github.com/Vinnizius1))
-- 🎯 **Destinatários:** Sandra (Gente & Gestão / RH) e Lideranças Técnicas de Engenharia do **Grupo BITTENCOURT**
+- 🎯 **Objetivo:** Demonstração prática e arquitetural para o case do **Grupo BITTENCOURT**
 
 ---
 
@@ -31,20 +36,20 @@ Em redes com dezenas a centenas de marcas parceiras (como Burger King, O Boticá
 ### Dores Críticas Resolvidas por este Hub:
 1. **Inteligência de Faturamento em Tempo Real:** Consolidação instantânea de LTV (Faturamento Anual Gerenciado) e contagem de unidades operacionais em nível nacional e regional.
 2. **Navegação & Auditoria Sem Fricção:** Busca corporativa ultra-rápida por Razão Social/Nome Fantasia ou CNPJ formatado, com filtros multifatoriais (Regiões e Status de Contrato) e paginação no banco de dados.
-3. **Segurança Corporativa Multitenancy:** Garantia absoluta de que nenhuma consulta exponha dados confidenciais fora da governança, com segurança declarativa aplicada diretamente no banco de dados (**Row-Level Security**).
-4. **Experiência de Carregamento Instantâneo:** Eliminação de telas brancas de carregamento com *Streaming SSR* e *React Suspense*, garantindo que métricas executivas sejam exibidas no primeiro instante de interação.
+3. **Segurança Corporativa Multitenancy:** Políticas de segurança declarativas aplicadas diretamente no banco de dados (**Row-Level Security**).
+4. **Experiência de Carregamento Instantâneo:** Eliminação de telas brancas com *Streaming SSR* e *React Suspense*, garantindo métricas visíveis no primeiro instante de interação.
 
 ---
 
-## 🧱 2. Matriz de Versões LTS Homologadas (Stack 2026)
+## 🧱 2. Matriz Tecnológica LTS (Stack 2026)
 
-Para garantir estabilidade corporativa, compatibilidade com pipelines corporativos e prevenção contra vulnerabilidades de dependências, esta aplicação foi construída e homologada com as versões ativas da indústria:
+Para garantir estabilidade corporativa, compatibilidade com pipelines modernos e prevenção contra vulnerabilidades de dependências, esta aplicação foi construída com as versões ativas da indústria:
 
-| Tecnologia / Pacote | Versão Homologada | Papel no Ecossistema | Racional de Engenharia |
+| Tecnologia / Pacote | Versão | Papel no Ecossistema | Racional de Engenharia |
 | :--- | :--- | :--- | :--- |
-| **Node.js** | `v22.x LTS` | Runtime de Execução | Suporte a longo prazo (LTS), gerenciamento de memória aprimorado e conformidade com servidores corporativos. |
-| **Next.js** | `16.3.5` | Framework Full Stack | App Router nativo, compilador Turbopack, Server Components e otimização automática de rotas dinâmicas. |
-| **React** | `19.2.8` | Biblioteca de Interface | Adoção plena da arquitetura moderna de Server Components, Actions e Suspense boundaries. |
+| **Node.js** | `v22.x LTS` | Runtime de Execução | Suporte a longo prazo (LTS), gerenciamento de memória aprimorado e conformidade corporativa. |
+| **Next.js** | `16.3.5` | Framework Full Stack | App Router nativo, compilador Turbopack, Server Components e otimização automática de rotas. |
+| **React** | `19.2.8` | Biblioteca de Interface | Adoção plena de Server Components, Actions e Suspense boundaries. |
 | **TypeScript** | `^5.0.0` | Linguagem & Tipagem | Modo estrito (`strict: true`), zero uso de `any`, tipagem espelhada diretamente do DDL relacional. |
 | **@supabase/ssr** | `^0.12.7` | Cliente Supabase Server | Gerenciamento seguro de cookies e autenticação adaptada para o runtime serverless do Next.js. |
 | **@supabase/supabase-js** | `^2.117.0` | Driver PostgREST | Acesso tipado ao PostgreSQL com suporte nativo a Row-Level Security e connection pooling. |
@@ -55,127 +60,26 @@ Para garantir estabilidade corporativa, compatibilidade com pipelines corporativ
 
 ---
 
-## 🏛️ 3. Arquitetura de Software & Decisões de Engenharia
+## 🏛️ 3. Arquitetura do Sistema & Trade-offs
 
-```
-                                      ┌────────────────────────────────────────┐
-                                      │              CLIENT BROWSER            │
-                                      │  (Filtros Reativos, Debounce, URL)     │
-                                      └───────────────────┬────────────────────┘
-                                                          │ HTTP Request (?q=...&region=...)
-                                                          ▼
-                                      ┌────────────────────────────────────────┐
-                                      │        NEXT.JS 16 APP ROUTER           │
-                                      │  (Vercel Edge / Serverless Functions)  │
-                                      └─────┬────────────────────────────┬──────┘
-                                            │                            │
-                     ┌──────────────────────┴─────────┐                  │
-                     ▼                                ▼                  │
-        ┌─────────────────────────┐      ┌─────────────────────────┐     │
-        │   RSC: KpiCardsSection  │      │   RSC: PartnersTable    │     │
-        │   (Streaming Suspense)  │      │   (Streaming Suspense)  │     │
-        └────────────┬────────────┘      └────────────┬────────────┘     │
-                     │                                │                  │
-                     └────────────────┬───────────────┘                  │
-                                      ▼                                  │
-                        ┌───────────────────────────┐                    │
-                        │   Supabase SSR Driver     │◄───────────────────┘
-                        │   (Query Sanitizer)       │
-                        └─────────────┬─────────────┘
-                                      │ PostgREST over HTTPS
-                                      ▼
-                        ┌───────────────────────────┐
-                        │    PostgreSQL Database    │
-                        │    • Row-Level Security   │
-                        │    • B-Tree Indexes       │
-                        │    • CHECK Constraints    │
-                        └───────────────────────────┘
-```
+A aplicação utiliza arquitetura híbrida de Server Components com Client Boundaries estritos, integrando Streaming SSR via HTTP Chunked Transfer e banco PostgreSQL com Row-Level Security.
 
-### ⚖️ Trade-offs Arquiteturais: O Porquê, o Sim e o Não
-
-#### 1. React Server Components (RSC) vs. Client-Side Data Fetching (SPA tradicional)
-- **O Porquê:** Reduzir drasticamente o JavaScript enviado ao cliente e executar regras de agregação de faturamento diretamente no servidor.
-- **O Sim (Prós):** Bundle inicial ultra-leve, proteção de regras de negócio, carregamento instantâneo (SSR) e segurança absoluta das chamadas ao banco.
-- **O Não (Riscos/Contras):** Exige segregação rigorosa de responsabilidades entre Server Components (sem hooks/eventos) e Client Components (`"use client"` pontual).
-
-#### 2. Streaming com React Suspense
-- **O Porquê:** A agregação de faturamento de toda a rede (KPIs) e a query da tabela paginada não devem travar a renderização inicial da página.
-- **O Sim (Prós):** O usuário recebe a casca da página e os *skeletons* de loading imediatamente via HTTP Chunked Transfer, melhorando as métricas de **LCP (Largest Contentful Paint)**.
-- **O Não (Riscos/Contras):** Exige planejamento de fallbacks visuais limpos para evitar Layout Shifts (CLS).
-
-#### 3. URL Search Params como Gerenciador de Estado
-- **O Porquê:** Manter busca (`?q=`), filtros (`?region=`, `?status=`) e página (`?page=`) diretamente na URL, eliminando dependência de bibliotecas de estado global como Redux ou Zustand.
-- **O Sim (Prós):** Links 100% compartilháveis (deep linking), persistência nativa no histórico do navegador (botões Voltar/Avançar funcionam) e suporte imediato a SSR em qualquer link compartilhado.
-- **O Não (Riscos/Contras):** Exige debounce controlado no cliente para não disparar requisições em excesso a cada tecla digitada.
-
-#### 4. PostgREST Injection Protection & Sanitização de Queries
-- **O Porquê:** O Supabase utiliza PostgREST internamente, onde caracteres especiais como `%`, `.`, `,` e operadores `.or()` podem alterar o plano de execução da query.
-- **O Sim (Prós):** Sanitização estrita em camada utilitária isolada e testada ([`src/lib/utils/query.ts`](./src/lib/utils/query.ts)), garantindo integridade e prevenção de queries maliciosas.
-- **O Não (Riscos/Contras):** Queries complexas requerem métodos de escape cuidadosos para não anular buscas válidas com acentuação ou pontuação de CNPJ.
+> 📖 **Documentação Arquitetural Completa:**  
+> Aprofundamento detalhado sobre os trade-offs técnicos (RSC vs SPA, Streaming Suspense, Estado em URL e Prevenção de Injeção no PostgREST), modelagem DDL e cobertura de testes estão documentados em [**ARCHITECTURE.md**](./ARCHITECTURE.md).
 
 ---
 
-## 🛡️ 4. Modelagem de Dados & Segurança (Supabase DDL)
+## 🧪 4. Engenharia de Testes Automatizados (Vitest)
 
-A tabela relacional `franchise_partners` conta com tipagem rigorosa, índices estratégicos para acelerar consultas e políticas de RLS ativas:
+A aplicação segue a metodologia de **TDD / Feedback Rápido**, com uma suíte de **35 testes unitários** automatizados e 100% aprovados em ~260ms:
 
-```sql
--- DDL Resumido da Tabela Corporativa de Franqueados
-CREATE TABLE franchise_partners (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    company_name VARCHAR(255) NOT NULL,
-    cnpj VARCHAR(18) NOT NULL UNIQUE,
-    segment VARCHAR(100) NOT NULL,
-    region VARCHAR(50) NOT NULL,
-    units_count INTEGER NOT NULL DEFAULT 1 CHECK (units_count >= 0),
-    annual_revenue NUMERIC(15, 2) NOT NULL DEFAULT 0.00 CHECK (annual_revenue >= 0),
-    status VARCHAR(50) NOT NULL DEFAULT 'ativo' 
-        CHECK (status IN ('ativo', 'negociacao', 'lead', 'inadimplente', 'cancelado')),
-    account_manager VARCHAR(255) NOT NULL,
-    last_interaction_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
--- Índices B-Tree para buscas e filtros de alta frequência
-CREATE INDEX idx_franchise_partners_region ON franchise_partners(region);
-CREATE INDEX idx_franchise_partners_status ON franchise_partners(status);
-CREATE INDEX idx_franchise_partners_company_search ON franchise_partners USING gin(to_tsvector('portuguese', company_name));
-
--- Ativação de Row Level Security (RLS)
-ALTER TABLE franchise_partners ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Allow public read access to active partners"
-    ON franchise_partners FOR SELECT
-    USING (true);
--- Nota de Arquitetura: Política pública adotada para visualização nesta POC demonstrativa.
--- Em ambiente produtivo multitenant com autenticação, restringe-se por tenant_id ou auth.uid().
-```
+- **[`kpi.test.ts`](./src/lib/utils/kpi.test.ts):** Cálculos de faturamento consolidado (LTV da rede), totalizador dinâmico de unidades operacionais e ticket médio por unidade.
+- **[`formatters.test.ts`](./src/lib/utils/formatters.test.ts):** Formatação monetária em padrão BRL (`Intl.NumberFormat`), aplicação de máscara estrita de CNPJ e formatação humanizada de datas.
+- **[`query.test.ts`](./src/lib/utils/query.test.ts):** Remoção de caracteres maliciosos, tratamento de filtros de região/status, cálculo de offsets de paginação e sanitização contra falhas de injeção em APIs PostgREST.
 
 ---
 
-## 🧪 5. Engenharia de Testes Automatizados (Vitest)
-
-A aplicação segue a metodologia de **TDD / Feedback Rápido**, com uma suíte de **35 testes unitários** automatizados e 100% aprovados:
-
-```bash
-✓ src/lib/utils/kpi.test.ts (10 tests)
-✓ src/lib/utils/query.test.ts (16 tests)
-✓ src/lib/utils/formatters.test.ts (9 tests)
-
-Test Files  3 passed (3)
-     Tests  35 passed (35)
-  Duration  266ms
-```
-
-### O que é coberto pela suíte:
-1. **[`kpi.test.ts`](./src/lib/utils/kpi.test.ts):** Cálculos de faturamento consolidado (LTV da rede), totalizador dinâmico de unidades operacionais, cálculo de ticket médio por unidade e abreviação visual corporativa (`R$ 318 mi`, `R$ 45 mil`).
-2. **[`formatters.test.ts`](./src/lib/utils/formatters.test.ts):** Formatação monetária em padrão BRL (`Intl.NumberFormat`), aplicação de máscara estrita de CNPJ (`##.###.###/####-##`) e formatação humanizada de datas no fuso horário corporativo (`pt-BR`).
-3. **[`query.test.ts`](./src/lib/utils/query.test.ts):** Remoção de caracteres maliciosos, tratamento de filtros de região/status, cálculo de offsets de paginação e prevenção contra falhas de injeção em APIs PostgREST.
-
----
-
-## 🚀 6. Como Executar Localmente
+## 🚀 5. Como Executar Localmente
 
 ### Pré-requisitos
 - Node.js `22.x LTS` ou superior
@@ -221,41 +125,40 @@ npm start
 
 ---
 
-## 🎯 7. Recursos de Demonstração & Dossiê Interativo
+## 🎯 6. Recursos de Demonstração & Dossiê Interativo
 
-Para proporcionar à **Sandra (RH)** e aos **Líderes Técnicos** do Grupo BITTENCOURT uma experiência de produto completa e interativa (sem a fricção de exigir autenticação de login nesta POC):
+Para proporcionar aos avaliadores do Grupo BITTENCOURT uma experiência de produto completa e interativa (sem a fricção de exigir autenticação de login nesta POC):
 
 1. **Dossiê Estratégico do Parceiro Franqueado (Modal Interativo):**
-   - Ao clicar em qualquer linha da tabela de parceiros (`<tr>`), abre-se o **Dossiê Executivo** com:
+   - Ao clicar em qualquer linha da tabela de parceiros (`<tr>`) ou no botão acessível **"Ver Ficha >"**, abre-se o **Dossiê Executivo** com:
      - Ficha cadastral detalhada (Razão Social, CNPJ formatado, segmento e status).
      - Métricas de BI calculadas: Faturamento Anual (LTV), contagem de unidades e **Ticket Médio por Franquia** (`faturamento / unidades`).
      - Governança corporativa: Gestor de conta responsável, data da última auditoria e badge de conformidade com PostgreSQL RLS.
      - Ações rápidas com feedback imediato: **Copiar Ficha Cadastral** (área de transferência) e **Simular Contato com o Gestor**.
 2. **Apresentação Executiva do Case (Header):**
-   - Botão **"Sobre o Case"** no topo da aplicação, resumindo a proposta de valor para o Grupo BITTENCOURT, os diferenciais técnicos e o guia de navegação.
+   - Botão **"Sobre o Case"** no topo da aplicação com animação convidativa efêmera (*Feature Discovery Beacon*), resumindo a proposta de valor para o Grupo BITTENCOURT, os diferenciais técnicos e o guia de navegação.
 
 ---
 
-## 📚 8. Fundamentos Técnicos & Caderno de Preparação
+## 📚 7. Fundamentos Técnicos & Decisões de Engenharia
 
-Os conceitos fundamentais de arquitetura, padrões sênior e preparação para entrevistas técnicas foram mapeados em 5 módulos de estudo pelo autor:
+Os conceitos fundamentais de arquitetura, boas práticas e decisões de engenharia de software foram estruturados em módulos de referência:
 - **Módulo 1:** Server Components vs Client Components, Composição RSC Boundary e Streaming Suspense.
 - **Módulo 2:** Row-Level Security (RLS) e Mitigação de Injeção PostgREST.
 - **Módulo 3:** Estado na URL (`searchParams`) e Estratégia de Debounce.
 - **Módulo 4:** Pirâmide de Testes e Vitest vs Jest (Feedback loop de ~260ms).
 - **Módulo 5:** Build do Next.js (Rotas Estáticas vs Dinâmicas) e Inlining Seguro de Env Vars (`NEXT_PUBLIC_`).
 
-
 ---
 
-## 👨‍💼 9. Sobre o Autor & Contato
+## 👨‍💼 8. Sobre o Autor & Contato
 
 **Vinicius Matos de Mendonça**  
-Desenvolvedor Full Stack especializado no ecossistema moderno de JavaScript/TypeScript, Next.js App Router e arquiteturas de dados escaláveis.
+Desenvolvedor Full Stack com foco no ecossistema moderno de JavaScript/TypeScript, Next.js App Router e arquiteturas de dados escaláveis.
 
 - **GitHub:** [github.com/Vinnizius1](https://github.com/Vinnizius1)
 - **Projeto:** [Franchise Partner Hub no GitHub](https://github.com/Vinnizius1/franchise-partner-hub)
 - **Live Demo:** [franchise-partner-hub.vercel.app](https://franchise-partner-hub.vercel.app)
 
 ---
-*Documentação técnica homologada para o Grupo BITTENCOURT. Setembro de 2026.*
+*Projeto prático e documentação técnica desenvolvidos para o case do Grupo BITTENCOURT. Setembro de 2026.*
