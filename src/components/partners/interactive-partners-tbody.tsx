@@ -24,8 +24,18 @@ export function InteractivePartnersTbody({
           partners.map((partner: CorporatePartner) => (
             <tr
               key={partner.id}
+              tabIndex={0}
+              role="button"
+              aria-haspopup="dialog"
+              aria-label={`Ver dossiê estratégico de ${partner.company_name}`}
               onClick={() => setSelectedPartner(partner)}
-              className="hover:bg-zinc-900/80 transition-all group cursor-pointer"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setSelectedPartner(partner);
+                }
+              }}
+              className="hover:bg-zinc-900/80 transition-all group cursor-pointer focus:outline-none focus:bg-zinc-900/90 focus:ring-1 focus:ring-blue-500/50"
               title="Clique para abrir o Dossiê Estratégico do Franqueado"
             >
               {/* 1. Nome & CNPJ */}
@@ -76,14 +86,27 @@ export function InteractivePartnersTbody({
                 {partner.account_manager}
               </td>
 
-              {/* 8. Data da Última Interação & Gatilho de Abertura */}
+              {/* 8. Data da Última Interação & Gatilho Operável por Teclado */}
               <td className="py-3.5 px-6 text-right text-xs text-zinc-400 font-mono">
-                <div className="flex items-center justify-end gap-2">
+                <div className="flex items-center justify-end gap-3">
                   <div className="flex items-center gap-1.5">
                     <Calendar className="w-3 h-3 text-zinc-500" />
                     <span>{formatDateBR(partner.last_interaction_at)}</span>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-blue-400 group-hover:translate-x-0.5 transition-all" />
+
+                  {/* Botão de Ação Acessível por Teclado e Foco */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedPartner(partner);
+                    }}
+                    aria-label={`Abrir dossiê de ${partner.company_name}`}
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-400 group-hover:border-blue-500/40 group-hover:text-blue-300 group-hover:bg-blue-500/10 transition-all cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 text-[11px]"
+                  >
+                    <span className="hidden sm:inline">Ver Ficha</span>
+                    <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
                 </div>
               </td>
             </tr>
@@ -105,7 +128,7 @@ export function InteractivePartnersTbody({
         )}
       </tbody>
 
-      {/* Modal Interativo do Franqueado */}
+      {/* Modal Interativo do Franqueado (Renderizado via Portal em document.body) */}
       <PartnerDetailModal
         partner={selectedPartner}
         isOpen={!!selectedPartner}
