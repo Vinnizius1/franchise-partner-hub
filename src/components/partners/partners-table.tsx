@@ -2,27 +2,73 @@ import React from "react";
 import { createClient } from "@/lib/supabase/server";
 import { CorporatePartner } from "@/types/partner.types";
 import { StatusBadge } from "@/components/ui/badge";
-import { Building2, MapPin, Calendar, DollarSign, Store } from "lucide-react";
+import { PaginationControls } from "@/components/partners/pagination-controls";
+import { Building2, MapPin, Calendar, Store, Inbox } from "lucide-react";
+
+interface PartnersTableProps {
+  searchParams?: Promise<{
+    search?: string;
+    status?: string;
+    region?: string;
+    page?: string;
+  }>;
+}
 
 /**
- * 🧠 [SENIOR MENTAL MODEL]: Server Component de Alta Densidade
- * Este componente roda 100% no servidor Node.js. Ele busca os dados
- * diretamente do Supabase sem expor lógica de queries nem onerar o bundle JS do cliente.
+ * 🧠 [SENIOR MENTAL MODEL]: Server Component com Filtragem e Paginação no Banco
+ * Em vez de buscar todos os registros e filtrar no JavaScript (inviável para big data),
+ * a filtragem é delegada ao PostgreSQL via Supabase (Database-Level Filtering & Pagination),
+ * consumindo os Search Params da URL de forma reativa.
  */
-export async function PartnersTable() {
-  // 🧪 [DEMO / APRESENTAÇÃO TÉCNICA]: Delay proposital de 1.5s
-  // Usado estritamente para demonstrar o poder do React Suspense + Progressive Streaming
-  // e o comportamento visual do Skeleton Loader sem travar o LCP da aplicação.
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+export async function PartnersTable({ searchParams }: PartnersTableProps) {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const rawSearch = resolvedParams.search;
+  const search =
+    (Array.isArray(rawSearch) ? rawSearch[0] : rawSearch)?.trim() || "";
+  const status = resolvedParams.status || "all";
+  const region = resolvedParams.region || "all";
+
+  const rawPage = resolvedParams.page;
+  const pageParam = Array.isArray(rawPage) ? rawPage[0] : rawPage;
+  const parsedPage = Math.floor(Number(pageParam));
+  const currentPage =
+    Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+
+  const pageSize = 6; // Tamanho ideal de página para PoC com 15 registros
+  const from = (currentPage - 1) * pageSize;
+  const to = from + pageSize - 1;
 
   const supabase = await createClient();
 
-  const { data: partners, error } = await supabase
+  // Construção dinâmica da query no PostgreSQL com contagem exata
+  let query = supabase
     .from("corporate_partners")
-    .select("*")
-    .order("annual_revenue", { ascending: false });
+    .select("*", { count: "exact" });
 
-  if (error) {
+  if (search) {
+    const escaped = search.replace(/[\\"]/g, "\\$&");
+    const pattern = `"%${escaped}%"`;
+    query = query.or(`company_name.ilike.${pattern},cnpj.ilike.${pattern}`);
+  }
+
+  if (status && status !== "all") {
+    query = query.eq("status", status);
+  }
+
+  if (region && region !== "all") {
+    query = query.eq("region", region);
+  }
+
+  const {
+    data: rawPartners,
+    count,
+    error,
+  } = await query.order("annual_revenue", { ascending: false }).range(from, to);
+
+  // PGRST103: Requested range not satisfiable (ocorre se ?page= for maior que a última página)
+  const isOutOfRange = error?.code === "PGRST103";
+
+  if (error && !isOutOfRange) {
     return (
       <div className="p-8 text-center border border-rose-500/20 rounded-xl bg-rose-500/5 text-rose-400">
         <p className="font-medium">Erro ao carregar dados do Supabase</p>
@@ -32,6 +78,11 @@ export async function PartnersTable() {
       </div>
     );
   }
+
+  const partners = isOutOfRange ? [] : rawPartners || [];
+
+  const totalCount = count || 0;
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -65,7 +116,7 @@ export async function PartnersTable() {
               Redes & Franqueados Corporativos
             </h2>
             <p className="text-xs text-zinc-400">
-              Total de {partners?.length || 0} parceiros consultados sob demanda (RSC)
+              Total de {totalCount} parceiros encontrados sob demanda (RSC)
             </p>
           </div>
         </div>
@@ -89,71 +140,95 @@ export async function PartnersTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/50">
-            {partners?.map((partner: CorporatePartner) => (
-              <tr
-                key={partner.id}
-                className="hover:bg-zinc-900/50 transition-colors group cursor-default"
-              >
-                {/* 1. Nome & CNPJ */}
-                <td className="py-3.5 px-6">
-                  <div className="font-medium text-zinc-100 group-hover:text-blue-400 transition-colors">
-                    {partner.company_name}
-                  </div>
-                  <div className="text-xs font-mono text-zinc-500 mt-0.5">
-                    {partner.cnpj}
-                  </div>
-                </td>
+            {partners && partners.length > 0 ? (
+              partners.map((partner: CorporatePartner) => (
+                <tr
+                  key={partner.id}
+                  className="hover:bg-zinc-900/50 transition-colors group cursor-default"
+                >
+                  {/* 1. Nome & CNPJ */}
+                  <td className="py-3.5 px-6">
+                    <div className="font-medium text-zinc-100 group-hover:text-blue-400 transition-colors">
+                      {partner.company_name}
+                    </div>
+                    <div className="text-xs font-mono text-zinc-500 mt-0.5">
+                      {partner.cnpj}
+                    </div>
+                  </td>
 
-                {/* 2. Segmento */}
-                <td className="py-3.5 px-4 text-xs text-zinc-300">
-                  <span className="px-2 py-0.5 rounded bg-zinc-800/80 border border-zinc-700/50 text-[11px]">
-                    {partner.segment}
-                  </span>
-                </td>
+                  {/* 2. Segmento */}
+                  <td className="py-3.5 px-4 text-xs text-zinc-300">
+                    <span className="px-2 py-0.5 rounded bg-zinc-800/80 border border-zinc-700/50 text-[11px]">
+                      {partner.segment}
+                    </span>
+                  </td>
 
-                {/* 3. Região */}
-                <td className="py-3.5 px-4 text-xs text-zinc-400">
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-zinc-500" />
-                    {partner.region}
-                  </div>
-                </td>
+                  {/* 3. Região */}
+                  <td className="py-3.5 px-4 text-xs text-zinc-400">
+                    <div className="flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-zinc-500" />
+                      {partner.region}
+                    </div>
+                  </td>
 
-                {/* 4. Unidades */}
-                <td className="py-3.5 px-4 text-center font-mono text-xs text-zinc-300">
-                  <span className="inline-flex items-center gap-1">
-                    <Store className="w-3 h-3 text-zinc-500" />
-                    {partner.units_count}
-                  </span>
-                </td>
+                  {/* 4. Unidades */}
+                  <td className="py-3.5 px-4 text-center font-mono text-xs text-zinc-300">
+                    <span className="inline-flex items-center gap-1">
+                      <Store className="w-3 h-3 text-zinc-500" />
+                      {partner.units_count}
+                    </span>
+                  </td>
 
-                {/* 5. Faturamento Anual */}
-                <td className="py-3.5 px-4 font-mono font-medium text-xs text-emerald-400">
-                  {formatCurrency(partner.annual_revenue)}
-                </td>
+                  {/* 5. Faturamento Anual */}
+                  <td className="py-3.5 px-4 font-mono font-medium text-xs text-emerald-400">
+                    {formatCurrency(partner.annual_revenue)}
+                  </td>
 
-                {/* 6. Status Badge */}
-                <td className="py-3.5 px-4">
-                  <StatusBadge status={partner.status} />
-                </td>
+                  {/* 6. Status Badge */}
+                  <td className="py-3.5 px-4">
+                    <StatusBadge status={partner.status} />
+                  </td>
 
-                {/* 7. Gestor da Conta */}
-                <td className="py-3.5 px-4 text-xs text-zinc-300 font-medium">
-                  {partner.account_manager}
-                </td>
+                  {/* 7. Gestor da Conta */}
+                  <td className="py-3.5 px-4 text-xs text-zinc-300 font-medium">
+                    {partner.account_manager}
+                  </td>
 
-                {/* 8. Data da Última Interação */}
-                <td className="py-3.5 px-6 text-right text-xs text-zinc-400 font-mono">
-                  <div className="flex items-center justify-end gap-1.5">
-                    <Calendar className="w-3 h-3 text-zinc-500" />
-                    {formatDate(partner.last_interaction_at)}
+                  {/* 8. Data da Última Interação */}
+                  <td className="py-3.5 px-6 text-right text-xs text-zinc-400 font-mono">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Calendar className="w-3 h-3 text-zinc-500" />
+                      {formatDate(partner.last_interaction_at)}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={8} className="py-12 text-center text-zinc-500">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <Inbox className="w-8 h-8 text-zinc-600" />
+                    <p className="text-sm font-medium text-zinc-400">
+                      Nenhum parceiro encontrado com esses filtros
+                    </p>
+                    <p className="text-xs text-zinc-500">
+                      Tente alterar os termos de busca ou limpar os filtros.
+                    </p>
                   </div>
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
+
+      {/* Controles de Paginação */}
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalCount={totalCount}
+        pageSize={pageSize}
+      />
     </div>
   );
 }

@@ -2,8 +2,18 @@ import React, { Suspense } from "react";
 import { PartnersTable } from "@/components/partners/partners-table";
 import { TableSkeleton } from "@/components/partners/table-skeleton";
 import { KpiCards } from "@/components/partners/kpi-cards";
+import { PartnerFilters } from "@/components/partners/partner-filters";
 
-export default function HomePage() {
+interface HomePageProps {
+  searchParams?: Promise<{
+    search?: string;
+    status?: string;
+    region?: string;
+    page?: string;
+  }>;
+}
+
+export default function HomePage({ searchParams }: HomePageProps) {
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 selection:bg-blue-500/20 selection:text-blue-300">
       {/* 1. Header Corporativo */}
@@ -55,22 +65,32 @@ export default function HomePage() {
           <KpiCards />
         </Suspense>
 
-        {/* Bloco de Alta Densidade com Suspense Streaming */}
+        {/* Bloco de Busca, Filtros e Tabela de Alta Densidade */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h1 className="text-lg font-semibold tracking-tight text-zinc-100">
                 Painel Geral de Franquias Parceiras
               </h1>
               <p className="text-xs text-zinc-400">
-                Dados corporativos consultados sob demanda pelo servidor via Supabase SSR.
+                Busca, filtros e paginação gerenciados via URL Search Params com
+                SSR.
               </p>
             </div>
           </div>
 
+          {/* Componente de Filtros Interativos ('use client') */}
+          <Suspense
+            fallback={
+              <div className="h-16 rounded-xl bg-zinc-900/20 animate-pulse" />
+            }
+          >
+            <PartnerFilters />
+          </Suspense>
+
           {/* 🧠 [SENIOR MENTAL MODEL]: Limite de Suspense para Streaming */}
           <Suspense fallback={<TableSkeleton />}>
-            <PartnersTable />
+            <PartnersTable searchParams={searchParams} />
           </Suspense>
         </section>
       </main>
