@@ -1,6 +1,12 @@
 import React from "react";
 import { createClient } from "@/lib/supabase/server";
-import { Building2, TrendingUp, ShieldCheck, Zap } from "lucide-react";
+import {
+  Building2,
+  TrendingUp,
+  ShieldCheck,
+  Zap,
+  AlertCircle,
+} from "lucide-react";
 
 /**
  * 🧠 [SENIOR MENTAL MODEL]: Agregações Dinâmicas no Servidor
@@ -9,9 +15,20 @@ import { Building2, TrendingUp, ShieldCheck, Zap } from "lucide-react";
  */
 export async function KpiCards() {
   const supabase = await createClient();
-  const { data: partners } = await supabase
+  const { data: partners, error } = await supabase
     .from("corporate_partners")
     .select("annual_revenue");
+
+  if (error) {
+    return (
+      <div className="p-4 rounded-xl border border-rose-500/20 bg-rose-500/5 text-rose-400 text-xs flex items-center gap-2">
+        <AlertCircle className="w-4 h-4 shrink-0" />
+        <span>
+          Não foi possível carregar os KPIs consolidados: {error.message}
+        </span>
+      </div>
+    );
+  }
 
   const totalPartners = partners?.length || 0;
   const totalRevenue =
@@ -45,7 +62,9 @@ export async function KpiCards() {
       {/* 2. Faturamento Total */}
       <div className="p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
         <div className="flex items-center justify-between text-zinc-400 mb-2">
-          <span className="text-xs font-medium">Faturamento Total Gerenciado</span>
+          <span className="text-xs font-medium">
+            Faturamento Total Gerenciado
+          </span>
           <TrendingUp className="w-4 h-4 text-emerald-400" />
         </div>
         <div className="text-2xl font-bold font-mono text-emerald-400">
