@@ -4,6 +4,13 @@ import { CorporatePartner } from "@/types/partner.types";
 import { StatusBadge } from "@/components/ui/badge";
 import { PaginationControls } from "@/components/partners/pagination-controls";
 import { Building2, MapPin, Calendar, Store, Inbox } from "lucide-react";
+import { formatBRLCurrency, formatDateBR } from "@/lib/utils/formatters";
+import {
+  parsePageParam,
+  calculatePaginationRange,
+  calculateTotalPages,
+  buildSearchFilter,
+} from "@/lib/utils/query";
 
 interface PartnersTableProps {
   searchParams?: Promise<{
@@ -28,15 +35,8 @@ export async function PartnersTable({ searchParams }: PartnersTableProps) {
   const status = resolvedParams.status || "all";
   const region = resolvedParams.region || "all";
 
-  const rawPage = resolvedParams.page;
-  const pageParam = Array.isArray(rawPage) ? rawPage[0] : rawPage;
-  const parsedPage = Math.floor(Number(pageParam));
-  const currentPage =
-    Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
-
-  const pageSize = 6; // Tamanho ideal de página para PoC com 15 registros
-  const from = (currentPage - 1) * pageSize;
-  const to = from + pageSize - 1;
+  const currentPage = parsePageParam(resolvedParams.page);
+  const { from, to, pageSize } = calculatePaginationRange(currentPage);
 
   const supabase = await createClient();
 
@@ -45,10 +45,9 @@ export async function PartnersTable({ searchParams }: PartnersTableProps) {
     .from("corporate_partners")
     .select("*", { count: "exact" });
 
-  if (search) {
-    const escaped = search.replace(/[\\"]/g, "\\$&");
-    const pattern = `"%${escaped}%"`;
-    query = query.or(`company_name.ilike.${pattern},cnpj.ilike.${pattern}`);
+  const searchFilter = buildSearchFilter(search);
+  if (searchFilter) {
+    query = query.or(searchFilter);
   }
 
   if (status && status !== "all") {
@@ -82,27 +81,11 @@ export async function PartnersTable({ searchParams }: PartnersTableProps) {
   const partners = isOutOfRange ? [] : rawPartners || [];
 
   const totalCount = count || 0;
-  const totalPages = Math.ceil(totalCount / pageSize);
+  const totalPages = calculateTotalPages(totalCount, pageSize);
 
-  const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      maximumFractionDigits: 0,
-    }).format(val);
-  };
 
-  const formatDate = (dateStr: string) => {
-    try {
-      const date = new Date(dateStr);
-      return new Intl.DateTimeFormat("pt-BR", {
-        day: "2-digit",
-        month: "short",
-      }).format(date);
-    } catch {
-      return dateStr;
-    }
-  };
+
+
 
   return (
     <div className="w-full rounded-xl border border-zinc-800 bg-zinc-950/60 backdrop-blur overflow-hidden shadow-2xl">
@@ -181,7 +164,7 @@ export async function PartnersTable({ searchParams }: PartnersTableProps) {
 
                   {/* 5. Faturamento Anual */}
                   <td className="py-3.5 px-4 font-mono font-medium text-xs text-emerald-400">
-                    {formatCurrency(partner.annual_revenue)}
+                    {formatBRLCurrency(partner.annual_revenue)}
                   </td>
 
                   {/* 6. Status Badge */}
@@ -198,7 +181,7 @@ export async function PartnersTable({ searchParams }: PartnersTableProps) {
                   <td className="py-3.5 px-6 text-right text-xs text-zinc-400 font-mono">
                     <div className="flex items-center justify-end gap-1.5">
                       <Calendar className="w-3 h-3 text-zinc-500" />
-                      {formatDate(partner.last_interaction_at)}
+                      {formatDateBR(partner.last_interaction_at)}
                     </div>
                   </td>
                 </tr>
