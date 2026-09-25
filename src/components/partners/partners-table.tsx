@@ -1,16 +1,15 @@
 import React from "react";
 import { createClient } from "@/lib/supabase/server";
-import { CorporatePartner } from "@/types/partner.types";
-import { StatusBadge } from "@/components/ui/badge";
 import { PaginationControls } from "@/components/partners/pagination-controls";
-import { Building2, MapPin, Calendar, Store, Inbox } from "lucide-react";
-import { formatBRLCurrency, formatDateBR } from "@/lib/utils/formatters";
+import { InteractivePartnersTbody } from "@/components/partners/interactive-partners-tbody";
+import { Building2 } from "lucide-react";
 import {
   parsePageParam,
   calculatePaginationRange,
   calculateTotalPages,
   buildSearchFilter,
 } from "@/lib/utils/query";
+
 
 interface PartnersTableProps {
   searchParams?: Promise<{
@@ -122,87 +121,9 @@ export async function PartnersTable({ searchParams }: PartnersTableProps) {
               <th className="py-3 px-6 text-right">Última Interação</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-800/50">
-            {partners && partners.length > 0 ? (
-              partners.map((partner: CorporatePartner) => (
-                <tr
-                  key={partner.id}
-                  className="hover:bg-zinc-900/50 transition-colors group cursor-default"
-                >
-                  {/* 1. Nome & CNPJ */}
-                  <td className="py-3.5 px-6">
-                    <div className="font-medium text-zinc-100 group-hover:text-blue-400 transition-colors">
-                      {partner.company_name}
-                    </div>
-                    <div className="text-xs font-mono text-zinc-500 mt-0.5">
-                      {partner.cnpj}
-                    </div>
-                  </td>
-
-                  {/* 2. Segmento */}
-                  <td className="py-3.5 px-4 text-xs text-zinc-300">
-                    <span className="px-2 py-0.5 rounded bg-zinc-800/80 border border-zinc-700/50 text-[11px]">
-                      {partner.segment}
-                    </span>
-                  </td>
-
-                  {/* 3. Região */}
-                  <td className="py-3.5 px-4 text-xs text-zinc-400">
-                    <div className="flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-zinc-500" />
-                      {partner.region}
-                    </div>
-                  </td>
-
-                  {/* 4. Unidades */}
-                  <td className="py-3.5 px-4 text-center font-mono text-xs text-zinc-300">
-                    <span className="inline-flex items-center gap-1">
-                      <Store className="w-3 h-3 text-zinc-500" />
-                      {partner.units_count}
-                    </span>
-                  </td>
-
-                  {/* 5. Faturamento Anual */}
-                  <td className="py-3.5 px-4 font-mono font-medium text-xs text-emerald-400">
-                    {formatBRLCurrency(partner.annual_revenue)}
-                  </td>
-
-                  {/* 6. Status Badge */}
-                  <td className="py-3.5 px-4">
-                    <StatusBadge status={partner.status} />
-                  </td>
-
-                  {/* 7. Gestor da Conta */}
-                  <td className="py-3.5 px-4 text-xs text-zinc-300 font-medium">
-                    {partner.account_manager}
-                  </td>
-
-                  {/* 8. Data da Última Interação */}
-                  <td className="py-3.5 px-6 text-right text-xs text-zinc-400 font-mono">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <Calendar className="w-3 h-3 text-zinc-500" />
-                      {formatDateBR(partner.last_interaction_at)}
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={8} className="py-12 text-center text-zinc-500">
-                  <div className="flex flex-col items-center justify-center gap-2">
-                    <Inbox className="w-8 h-8 text-zinc-600" />
-                    <p className="text-sm font-medium text-zinc-400">
-                      Nenhum parceiro encontrado com esses filtros
-                    </p>
-                    <p className="text-xs text-zinc-500">
-                      Tente alterar os termos de busca ou limpar os filtros.
-                    </p>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
+          <InteractivePartnersTbody partners={partners} />
         </table>
+
       </div>
 
       {/* Controles de Paginação */}

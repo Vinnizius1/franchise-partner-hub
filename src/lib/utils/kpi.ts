@@ -35,3 +35,23 @@ export function calculatePartnersCount(records?: unknown[] | null): number {
   }
   return records.length;
 }
+
+/**
+ * Calcula o ticket médio anual de faturamento por unidade franqueada.
+ * Trata defensivamente divisão por zero, valores negativos ou dados nulos.
+ */
+export function calculateAverageRevenuePerUnit(
+  annualRevenue: number | string | null | undefined,
+  unitsCount: number | string | null | undefined
+): number {
+
+  const rev = typeof annualRevenue === "number" ? annualRevenue : Number(annualRevenue);
+  const units = typeof unitsCount === "number" ? unitsCount : Number(unitsCount);
+
+  if (!Number.isFinite(rev) || rev <= 0 || !Number.isFinite(units) || units <= 0) {
+    return 0;
+  }
+
+  return Math.round(rev / units);
+}
+

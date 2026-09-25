@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { calculateTotalRevenue, calculatePartnersCount } from "./kpi";
+import {
+  calculateTotalRevenue,
+  calculatePartnersCount,
+  calculateAverageRevenuePerUnit,
+} from "./kpi";
 
 describe("KPI Domain Calculations (kpi.ts)", () => {
   describe("calculateTotalRevenue", () => {
@@ -50,4 +54,28 @@ describe("KPI Domain Calculations (kpi.ts)", () => {
       expect(calculatePartnersCount([])).toBe(0);
     });
   });
+
+  describe("calculateAverageRevenuePerUnit", () => {
+    it("deve calcular corretamente a média inteira de faturamento por unidade", () => {
+      // R$ 62.000.000 / 54 unidades = 1.148.148
+      expect(calculateAverageRevenuePerUnit(62_000_000, 54)).toBe(1_148_148);
+    });
+
+    it("deve suportar strings numéricas vindas do banco de dados", () => {
+      expect(calculateAverageRevenuePerUnit("10000000", "10")).toBe(1_000_000);
+    });
+
+    it("deve retornar 0 para divisão por zero (unidades = 0)", () => {
+      expect(calculateAverageRevenuePerUnit(50_000_000, 0)).toBe(0);
+    });
+
+    it("deve retornar 0 para entradas nulas, indefinidas ou negativas", () => {
+      expect(calculateAverageRevenuePerUnit(null, 10)).toBe(0);
+      expect(calculateAverageRevenuePerUnit(10_000_000, null)).toBe(0);
+      expect(calculateAverageRevenuePerUnit(-500, 10)).toBe(0);
+      expect(calculateAverageRevenuePerUnit(10_000_000, -2)).toBe(0);
+      expect(calculateAverageRevenuePerUnit(undefined, undefined)).toBe(0);
+    });
+  });
 });
+
