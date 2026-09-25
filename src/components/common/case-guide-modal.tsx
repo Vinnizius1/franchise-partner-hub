@@ -9,6 +9,33 @@ function useIsClient() {
   return useSyncExternalStore(emptySubscribe, () => true, () => false);
 }
 
+const STORAGE_KEY = "b2b-hub:case-guide-seen";
+const CASE_SEEN_EVENT = "b2b-hub:case-seen-event";
+
+function subscribeToStorage(callback: () => void) {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("storage", callback);
+  window.addEventListener(CASE_SEEN_EVENT, callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener(CASE_SEEN_EVENT, callback);
+  };
+}
+
+function useHasSeenGuide() {
+  return useSyncExternalStore(
+    subscribeToStorage,
+    () => {
+      try {
+        return localStorage.getItem(STORAGE_KEY) === "true";
+      } catch {
+        return false;
+      }
+    },
+    () => true // SSR snapshot repousado para hidratação perfeita
+  );
+}
+
 import {
   Sparkles,
   X,
@@ -23,8 +50,23 @@ import {
 export function CaseGuideModal() {
   const [isOpen, setIsOpen] = useState(false);
   const isClient = useIsClient();
+  const hasSeenGuide = useHasSeenGuide();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+
+  const markGuideAsSeen = () => {
+    try {
+      localStorage.setItem(STORAGE_KEY, "true");
+      window.dispatchEvent(new Event(CASE_SEEN_EVENT));
+    } catch {
+      // Ignora restrições de navegação anônima
+    }
+  };
+
+  const handleOpen = () => {
+    setIsOpen(true);
+    markGuideAsSeen();
+  };
 
 
   useEffect(() => {
@@ -210,7 +252,10 @@ export function CaseGuideModal() {
             </a>
 
             <button
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                setIsOpen(false);
+                markGuideAsSeen();
+              }}
               className="px-3.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition-colors cursor-pointer"
             >
               Entendi
@@ -223,15 +268,41 @@ export function CaseGuideModal() {
 
   return (
     <>
-      {/* Botão Gatilho no Header */}
+      {/* Botão Gatilho no Header com Feature Discovery Beacon */}
       <button
-        onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 text-xs font-medium transition-all cursor-pointer shadow-sm hover:shadow-blue-500/10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        onClick={handleOpen}
+        className={`relative group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs font-medium transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+          !hasSeenGuide && isClient
+            ? "bg-gradient-to-r from-blue-600/30 via-indigo-600/20 to-blue-600/30 border-blue-500/60 text-blue-200 shadow-[0_0_20px_rgba(59,130,246,0.35)] hover:border-blue-400 hover:shadow-[0_0_25px_rgba(59,130,246,0.5)]"
+            : "bg-blue-500/10 border-blue-500/30 text-blue-300 hover:bg-blue-500/20 hover:border-blue-500/50 shadow-sm"
+        }`}
         title="Ver apresentação executiva do case BITTENCOURT"
       >
-        <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-        <span className="hidden sm:inline">Sobre o Case</span>
-        <span className="sm:hidden">Case</span>
+        {/* Beacon Pulse Dot animado (ativo apenas antes do primeiro clique) */}
+        {!hasSeenGuide && isClient && (
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+          </span>
+        )}
+
+        <Sparkles
+          className={`w-3.5 h-3.5 transition-transform group-hover:scale-110 ${
+            !hasSeenGuide && isClient ? "text-blue-300 animate-pulse" : "text-blue-400"
+          }`}
+        />
+        <span className="font-semibold tracking-wide">Sobre o Case</span>
+
+        {/* Badge contextual elegante */}
+        {!hasSeenGuide && isClient ? (
+          <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-500/20 text-blue-200 border border-blue-400/40 animate-pulse">
+            Novo • Guia
+          </span>
+        ) : (
+          <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-zinc-800/80 text-zinc-400 border border-zinc-700/50">
+            Guia
+          </span>
+        )}
       </button>
 
       {/* Renderiza via Portal no document.body para escapar do backdrop-blur do header */}
