@@ -42,13 +42,13 @@ Para garantir estabilidade corporativa, compatibilidade com pipelines corporativ
 
 | Tecnologia / Pacote | Versão Homologada | Papel no Ecossistema | Racional de Engenharia |
 | :--- | :--- | :--- | :--- |
-| **Node.js** | `v22.x (Active LTS)` | Runtime de Execução | Suporte a longo prazo, gerenciamento de memória aprimorado e conformidade com servidores corporativos. |
+| **Node.js** | `v22.x LTS` | Runtime de Execução | Suporte a longo prazo (LTS), gerenciamento de memória aprimorado e conformidade com servidores corporativos. |
 | **Next.js** | `16.3.5` | Framework Full Stack | App Router nativo, compilador Turbopack, Server Components e otimização automática de rotas dinâmicas. |
 | **React** | `19.2.8` | Biblioteca de Interface | Adoção plena da arquitetura moderna de Server Components, Actions e Suspense boundaries. |
 | **TypeScript** | `^5.0.0` | Linguagem & Tipagem | Modo estrito (`strict: true`), zero uso de `any`, tipagem espelhada diretamente do DDL relacional. |
 | **@supabase/ssr** | `^0.12.7` | Cliente Supabase Server | Gerenciamento seguro de cookies e autenticação adaptada para o runtime serverless do Next.js. |
 | **@supabase/supabase-js** | `^2.117.0` | Driver PostgREST | Acesso tipado ao PostgreSQL com suporte nativo a Row-Level Security e connection pooling. |
-| **Vitest** | `^5.0.2` | Suíte de Testes Unitários | Runner de testes ultra-rápido baseado em Vite/ESM (feedback loop de ~260ms para 35 testes). |
+| **Vitest** | `^5.0.1` | Suíte de Testes Unitários | Runner de testes ultra-rápido baseado em Vite/ESM (feedback loop de ~260ms para 35 testes). |
 | **Tailwind CSS** | `^4.0.0` | Engine de Estilização | Estilização utilitária de alta densidade visual (Dark Mode corporativo) com zero overhead em runtime. |
 | **use-debounce** | `^10.1.1` | Otimização de Entrada | Debounce reativo de 300ms nos inputs de busca para mitigação de sobrecarga no backend. |
 | **Lucide React** | `^1.47.0` | Design System de Ícones | Ícones SVG otimizados para dashboards corporativos com zero impacto no First Contentful Paint. |
@@ -111,7 +111,7 @@ Para garantir estabilidade corporativa, compatibilidade com pipelines corporativ
 
 #### 4. PostgREST Injection Protection & Sanitização de Queries
 - **O Porquê:** O Supabase utiliza PostgREST internamente, onde caracteres especiais como `%`, `.`, `,` e operadores `.or()` podem alterar o plano de execução da query.
-- **O Sim (Prós):** Sanitização estrita em camada utilitária isolada e testada ([`src/lib/utils/query.ts`](file:///e:/C%C3%93DIGOS/Bittencourt%20-%20Next.js%20App/nextjs_app/src/lib/utils/query.ts)), garantindo integridade e prevenção de queries maliciosas.
+- **O Sim (Prós):** Sanitização estrita em camada utilitária isolada e testada ([`src/lib/utils/query.ts`](./src/lib/utils/query.ts)), garantindo integridade e prevenção de queries maliciosas.
 - **O Não (Riscos/Contras):** Queries complexas requerem métodos de escape cuidadosos para não anular buscas válidas com acentuação ou pontuação de CNPJ.
 
 ---
@@ -125,7 +125,6 @@ A tabela relacional `franchise_partners` conta com tipagem rigorosa, índices es
 CREATE TABLE franchise_partners (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     company_name VARCHAR(255) NOT NULL,
-    trade_name VARCHAR(255) NOT NULL,
     cnpj VARCHAR(18) NOT NULL UNIQUE,
     segment VARCHAR(100) NOT NULL,
     region VARCHAR(50) NOT NULL,
@@ -134,14 +133,14 @@ CREATE TABLE franchise_partners (
     status VARCHAR(50) NOT NULL DEFAULT 'ativo' 
         CHECK (status IN ('ativo', 'negociacao', 'lead', 'inadimplente', 'cancelado')),
     account_manager VARCHAR(255) NOT NULL,
-    last_interaction_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    last_interaction_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Índices B-Tree para buscas e filtros de alta frequência
 CREATE INDEX idx_franchise_partners_region ON franchise_partners(region);
 CREATE INDEX idx_franchise_partners_status ON franchise_partners(status);
-CREATE INDEX idx_franchise_partners_company_search ON franchise_partners USING gin(to_tsvector('portuguese', company_name || ' ' || trade_name));
+CREATE INDEX idx_franchise_partners_company_search ON franchise_partners USING gin(to_tsvector('portuguese', company_name));
 
 -- Ativação de Row Level Security (RLS)
 ALTER TABLE franchise_partners ENABLE ROW LEVEL SECURITY;
@@ -149,6 +148,8 @@ ALTER TABLE franchise_partners ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read access to active partners"
     ON franchise_partners FOR SELECT
     USING (true);
+-- Nota de Arquitetura: Política pública adotada para visualização nesta POC demonstrativa.
+-- Em ambiente produtivo multitenant com autenticação, restringe-se por tenant_id ou auth.uid().
 ```
 
 ---
@@ -168,9 +169,9 @@ Test Files  3 passed (3)
 ```
 
 ### O que é coberto pela suíte:
-1. **[`kpi.test.ts`](file:///e:/C%C3%93DIGOS/Bittencourt%20-%20Next.js%20App/nextjs_app/src/lib/utils/kpi.test.ts):** Cálculos de faturamento consolidado (LTV da rede), totalizador dinâmico de unidades operacionais, cálculo de ticket médio por unidade e abreviação visual corporativa (`R$ 318 mi`, `R$ 45 mil`).
-2. **[`formatters.test.ts`](file:///e:/C%C3%93DIGOS/Bittencourt%20-%20Next.js%20App/nextjs_app/src/lib/utils/formatters.test.ts):** Formatação monetária em padrão BRL (`Intl.NumberFormat`), aplicação de máscara estrita de CNPJ (`##.###.###/####-##`) e formatação humanizada de datas no fuso horário corporativo (`pt-BR`).
-3. **[`query.test.ts`](file:///e:/C%C3%93DIGOS/Bittencourt%20-%20Next.js%20App/nextjs_app/src/lib/utils/query.test.ts):** Remoção de caracteres maliciosos, tratamento de filtros de região/status, cálculo de offsets de paginação e prevenção contra falhas de injeção em APIs PostgREST.
+1. **[`kpi.test.ts`](./src/lib/utils/kpi.test.ts):** Cálculos de faturamento consolidado (LTV da rede), totalizador dinâmico de unidades operacionais, cálculo de ticket médio por unidade e abreviação visual corporativa (`R$ 318 mi`, `R$ 45 mil`).
+2. **[`formatters.test.ts`](./src/lib/utils/formatters.test.ts):** Formatação monetária em padrão BRL (`Intl.NumberFormat`), aplicação de máscara estrita de CNPJ (`##.###.###/####-##`) e formatação humanizada de datas no fuso horário corporativo (`pt-BR`).
+3. **[`query.test.ts`](./src/lib/utils/query.test.ts):** Remoção de caracteres maliciosos, tratamento de filtros de região/status, cálculo de offsets de paginação e prevenção contra falhas de injeção em APIs PostgREST.
 
 ---
 
@@ -179,7 +180,7 @@ Test Files  3 passed (3)
 ### Pré-requisitos
 - Node.js `22.x LTS` ou superior
 - Git instalado
-- Conta no [Supabase](https://supabase.com) (ou instância local do PostgreSQL)
+- Projeto no [Supabase](https://supabase.com) (ou Supabase CLI com Docker)
 
 ### Passo a Passo
 
@@ -235,18 +236,15 @@ Para proporcionar à **Sandra (RH)** e aos **Líderes Técnicos** do Grupo BITTE
 
 ---
 
-## 📚 8. Caderno de Preparação Técnica (BITTENCOURT Prep)
+## 📚 8. Fundamentos Técnicos & Caderno de Preparação
 
-Para aprofundamento em fundamentos de arquitetura, padrões sênior e preparação para entrevistas técnicas (níveis Júnior & Pleno), consulte o documento dedicado:
-
-👉 **[Caderno de Questões Técnicas / BITTENCOURT Prep](./BITTENCOURT_PREP.md)**
-
-O caderno aborda 10 questões estratégicas divididas em 5 módulos:
-- **Módulo 1:** Server Components vs Client Components e Streaming Suspense (HTTP Chunked).
+Os conceitos fundamentais de arquitetura, padrões sênior e preparação para entrevistas técnicas foram mapeados em 5 módulos de estudo pelo autor:
+- **Módulo 1:** Server Components vs Client Components, Composição RSC Boundary e Streaming Suspense.
 - **Módulo 2:** Row-Level Security (RLS) e Mitigação de Injeção PostgREST.
 - **Módulo 3:** Estado na URL (`searchParams`) e Estratégia de Debounce.
-- **Módulo 4:** Pirâmide de Testes e Vitest vs Jest.
+- **Módulo 4:** Pirâmide de Testes e Vitest vs Jest (Feedback loop de ~260ms).
 - **Módulo 5:** Build do Next.js (Rotas Estáticas vs Dinâmicas) e Inlining Seguro de Env Vars (`NEXT_PUBLIC_`).
+
 
 ---
 

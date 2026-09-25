@@ -31,8 +31,9 @@ export default function HomePage({ searchParams }: HomePageProps) {
                   Grupo BITTENCOURT
                 </span>
                 <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                  B2B Hub v1.0
+                  B2B Hub v1.1
                 </span>
+
               </div>
               <p className="text-[11px] text-zinc-400">
                 Portal de Relacionamento Corporativo & Franquias
