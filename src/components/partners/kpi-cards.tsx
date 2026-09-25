@@ -7,11 +7,14 @@ import {
   Zap,
   AlertCircle,
 } from "lucide-react";
+import { calculateTotalRevenue, calculatePartnersCount } from "@/lib/utils/kpi";
+import { formatBRLCurrencyCompact } from "@/lib/utils/formatters";
 
 /**
  * 🧠 [SENIOR MENTAL MODEL]: Agregações Dinâmicas no Servidor
  * Para garantir consistência com a tabela e evitar discrepâncias de dados (Data Drift),
- * os KPIs de faturamento e contagem são derivados diretamente dos dados do Supabase.
+ * os KPIs de faturamento e contagem são derivados diretamente dos dados do Supabase
+ * utilizando funções puras de domínio desacopladas e testáveis.
  */
 export async function KpiCards() {
   const supabase = await createClient();
@@ -30,18 +33,8 @@ export async function KpiCards() {
     );
   }
 
-  const totalPartners = partners?.length || 0;
-  const totalRevenue =
-    partners?.reduce((acc, p) => acc + Number(p.annual_revenue), 0) || 0;
-
-  const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      notation: "compact",
-      maximumFractionDigits: 1,
-    }).format(val);
-  };
+  const totalPartners = calculatePartnersCount(partners);
+  const totalRevenue = calculateTotalRevenue(partners);
 
   return (
     <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -68,7 +61,7 @@ export async function KpiCards() {
           <TrendingUp className="w-4 h-4 text-emerald-400" />
         </div>
         <div className="text-2xl font-bold font-mono text-emerald-400">
-          {formatCurrency(totalRevenue)}
+          {formatBRLCurrencyCompact(totalRevenue)}
         </div>
         <p className="text-[11px] text-zinc-500 mt-1">
           Volume anual de LTV consolidado

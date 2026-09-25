@@ -4,6 +4,7 @@ import React, { useRef, useTransition } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { Search, RotateCcw, Loader2 } from "lucide-react";
+import { buildUpdatedSearchParams } from "@/lib/utils/query";
 
 /**
  * 🧠 [SENIOR MENTAL MODEL]: Filtros na URL com useDebouncedCallback & useTransition
@@ -24,14 +25,7 @@ export function PartnerFilters() {
   const currentRegion = searchParams.get("region") || "all";
 
   const updateParam = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value && value !== "all") {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
-    // Sempre resetar para página 1 ao alterar filtros
-    params.set("page", "1");
+    const params = buildUpdatedSearchParams(searchParams, key, value);
 
     startTransition(() => {
       router.replace(`${pathname}?${params.toString()}`);
