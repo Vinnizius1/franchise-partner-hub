@@ -4,6 +4,8 @@ import { TableSkeleton } from "@/components/partners/table-skeleton";
 import { KpiCards } from "@/components/partners/kpi-cards";
 import { PartnerFilters } from "@/components/partners/partner-filters";
 
+import { CaseGuideModal } from "@/components/common/case-guide-modal";
+
 interface HomePageProps {
   searchParams?: Promise<{
     search?: string;
@@ -29,8 +31,9 @@ export default function HomePage({ searchParams }: HomePageProps) {
                   Grupo BITTENCOURT
                 </span>
                 <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                  B2B Hub v1.0
+                  B2B Hub v1.1
                 </span>
+
               </div>
               <p className="text-[11px] text-zinc-400">
                 Portal de Relacionamento Corporativo & Franquias
@@ -38,14 +41,17 @@ export default function HomePage({ searchParams }: HomePageProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-2.5 text-xs">
+            <CaseGuideModal />
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span>Supabase Postgres Conectado</span>
+              <span className="hidden sm:inline">Supabase Postgres Conectado</span>
+              <span className="sm:hidden">Postgres</span>
             </div>
           </div>
         </div>
       </header>
+
 
       {/* 2. Conteúdo Principal */}
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
