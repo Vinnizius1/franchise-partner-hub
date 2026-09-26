@@ -71,18 +71,8 @@ export function InteractivePartnersView({
             {partners.map((partner: CorporatePartner) => (
               <tr
                 key={partner.id}
-                tabIndex={0}
-                role="button"
-                aria-haspopup="dialog"
-                aria-label={`Ver dossiê estratégico de ${partner.company_name}`}
                 onClick={() => setSelectedPartner(partner)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    setSelectedPartner(partner);
-                  }
-                }}
-                className="hover:bg-zinc-900/80 transition-all group cursor-pointer focus:outline-none focus:bg-zinc-900/90 focus:ring-1 focus:ring-blue-500/50"
+                className="hover:bg-zinc-900/80 transition-all group cursor-pointer"
                 title="Clique para abrir o Dossiê Estratégico do Franqueado"
               >
                 {/* 1. Nome & CNPJ */}

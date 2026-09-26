@@ -36,7 +36,7 @@ Em redes com dezenas a centenas de marcas parceiras (como Burger King, O Boticá
 ### Dores Críticas Resolvidas por este Hub:
 1. **Inteligência de Faturamento em Tempo Real:** Consolidação instantânea de LTV (Faturamento Anual Gerenciado) e contagem de unidades operacionais em nível nacional e regional.
 2. **Navegação & Auditoria Sem Fricção:** Busca corporativa ultra-rápida por Razão Social/Nome Fantasia ou CNPJ formatado, com filtros multifatoriais (Regiões e Status de Contrato) e paginação no banco de dados.
-3. **Segurança Corporativa Multitenancy:** Políticas de segurança declarativas aplicadas diretamente no banco de dados (**Row-Level Security**).
+3. **Segurança de Dados Granular:** Políticas de segurança declarativas aplicadas diretamente no banco de dados via **PostgreSQL Row-Level Security (RLS)**.
 4. **Experiência de Carregamento Instantâneo:** Eliminação de telas brancas com *Streaming SSR* e *React Suspense*, garantindo métricas visíveis no primeiro instante de interação.
 
 ---
@@ -75,7 +75,7 @@ A aplicação segue a metodologia de **TDD / Feedback Rápido**, com uma suíte 
 
 - **[`kpi.test.ts`](./src/lib/utils/kpi.test.ts):** Cálculos de faturamento consolidado (LTV da rede), totalizador dinâmico de unidades operacionais e ticket médio por unidade.
 - **[`formatters.test.ts`](./src/lib/utils/formatters.test.ts):** Formatação monetária em padrão BRL (`Intl.NumberFormat`), aplicação de máscara estrita de CNPJ e formatação humanizada de datas.
-- **[`query.test.ts`](./src/lib/utils/query.test.ts):** Remoção de caracteres maliciosos, tratamento de filtros de região/status, cálculo de offsets de paginação e sanitização contra falhas de injeção em APIs PostgREST.
+- **[`query.test.ts`](./src/lib/utils/query.test.ts):** Escape de aspas e barras delimitadoras, tratamento de filtros de região/status, cálculo de offsets de paginação e sanitização contra falhas de injeção em APIs PostgREST.
 
 ---
 
