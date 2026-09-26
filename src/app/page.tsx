@@ -20,33 +20,32 @@ export default function HomePage({ searchParams }: HomePageProps) {
     <div className="min-h-screen bg-zinc-950 text-zinc-100 selection:bg-blue-500/20 selection:text-blue-300">
       {/* 1. Header Corporativo */}
       <header className="border-b border-zinc-800/80 bg-zinc-900/40 backdrop-blur sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20 text-sm sm:text-base shrink-0">
               B
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold tracking-tight text-zinc-100">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="font-bold tracking-tight text-zinc-100 text-sm sm:text-base truncate">
                   Grupo BITTENCOURT
                 </span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                  B2B Hub v1.1
+                <span className="px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 shrink-0">
+                  v1.1
                 </span>
-
               </div>
-              <p className="text-[11px] text-zinc-400">
-                Portal de Relacionamento Corporativo & Franquias
+              <p className="text-[10px] sm:text-[11px] text-zinc-400 truncate">
+                Portal de Franquias & Expansão
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 text-xs">
+          <div className="flex items-center gap-2 text-xs shrink-0">
             <CaseGuideModal />
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="hidden sm:inline">Supabase Postgres Conectado</span>
-              <span className="sm:hidden">Postgres</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 text-[11px] sm:text-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+              <span className="hidden sm:inline">Supabase Postgres</span>
+              <span className="sm:hidden font-mono text-[10px]">Postgres</span>
             </div>
           </div>
         </div>
@@ -54,7 +53,7 @@ export default function HomePage({ searchParams }: HomePageProps) {
 
 
       {/* 2. Conteúdo Principal */}
-      <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Banner de KPIs Derivados Dinamicamente */}
         <Suspense
           fallback={

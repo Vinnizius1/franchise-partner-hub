@@ -53,7 +53,7 @@ export function PartnerFilters() {
 
   return (
     <div className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/40 backdrop-blur space-y-3">
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         {/* 1. Campo de Busca com Ícone e Indicador de Transição */}
         <div className="relative flex-1">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
@@ -73,12 +73,12 @@ export function PartnerFilters() {
           />
         </div>
 
-        {/* 2. Filtro por Região */}
-        <div className="flex items-center gap-2">
+        {/* 2. Filtros e Ações */}
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2">
           <select
             value={currentRegion}
             onChange={(e) => updateParam("region", e.target.value)}
-            className="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors cursor-pointer"
+            className="w-full sm:w-auto bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors cursor-pointer"
           >
             <option value="all">Todas as Regiões</option>
             <option value="Sudeste">Sudeste</option>
@@ -92,7 +92,7 @@ export function PartnerFilters() {
           <select
             value={currentStatus}
             onChange={(e) => updateParam("status", e.target.value)}
-            className="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors cursor-pointer"
+            className="w-full sm:w-auto bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-300 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors cursor-pointer"
           >
             <option value="all">Todos os Status</option>
             <option value="ativo">Ativo</option>
@@ -106,7 +106,7 @@ export function PartnerFilters() {
           {hasActiveFilters && (
             <button
               onClick={handleReset}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-800 bg-zinc-800/50 hover:bg-zinc-800 text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="col-span-2 sm:col-span-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-800 bg-zinc-800/50 hover:bg-zinc-800 text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
               title="Limpar todos os filtros"
             >
               <RotateCcw className="w-3.5 h-3.5" />

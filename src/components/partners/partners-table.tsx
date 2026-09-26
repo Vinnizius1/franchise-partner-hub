@@ -1,7 +1,7 @@
 import React from "react";
 import { createClient } from "@/lib/supabase/server";
 import { PaginationControls } from "@/components/partners/pagination-controls";
-import { InteractivePartnersTbody } from "@/components/partners/interactive-partners-tbody";
+import { InteractivePartnersView } from "@/components/partners/interactive-partners-view";
 import { Building2 } from "lucide-react";
 import {
   parsePageParam,
@@ -82,49 +82,30 @@ export async function PartnersTable({ searchParams }: PartnersTableProps) {
   const totalCount = count || 0;
   const totalPages = calculateTotalPages(totalCount, pageSize);
 
-
-
-
-
   return (
     <div className="w-full rounded-xl border border-zinc-800 bg-zinc-950/60 backdrop-blur overflow-hidden shadow-2xl">
-      <div className="px-6 py-4 border-b border-zinc-800/80 flex items-center justify-between bg-zinc-900/30">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20">
+      <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-zinc-800/80 flex items-center justify-between bg-zinc-900/30">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 shrink-0">
             <Building2 className="w-4 h-4" />
           </div>
           <div>
             <h2 className="text-sm font-semibold text-zinc-100">
               Redes & Franqueados Corporativos
             </h2>
-            <p className="text-xs text-zinc-400">
+            <p className="text-[11px] sm:text-xs text-zinc-400">
               Total de {totalCount} parceiros encontrados sob demanda (RSC)
             </p>
           </div>
         </div>
-        <div className="text-xs text-zinc-500 font-mono">
-          PostgreSQL RLS • Active
+        <div className="text-[11px] sm:text-xs text-zinc-500 font-mono shrink-0">
+          <span className="hidden sm:inline">PostgreSQL RLS • Active</span>
+          <span className="sm:hidden">RLS Active</span>
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm border-collapse">
-          <thead>
-            <tr className="border-b border-zinc-800 bg-zinc-900/40 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
-              <th className="py-3 px-6">Rede / Franquia</th>
-              <th className="py-3 px-4">Segmento</th>
-              <th className="py-3 px-4">Região</th>
-              <th className="py-3 px-4 text-center">Unidades</th>
-              <th className="py-3 px-4">Faturamento Anual (LTV)</th>
-              <th className="py-3 px-4">Status</th>
-              <th className="py-3 px-4">Gestor BITTENCOURT</th>
-              <th className="py-3 px-6 text-right">Última Interação</th>
-            </tr>
-          </thead>
-          <InteractivePartnersTbody partners={partners} />
-        </table>
-
-      </div>
+      {/* Renderização Híbrida Responsiva (Table no Desktop / Cards no Mobile) */}
+      <InteractivePartnersView partners={partners} />
 
       {/* Controles de Paginação */}
       <PaginationControls

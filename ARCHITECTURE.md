@@ -51,21 +51,25 @@ O **Franchise Partner Hub** foi projetado seguindo uma arquitetura híbrida mode
 Toda decisão de engenharia em aplicações de missão crítica envolve trade-offs conscientes de performance, complexidade e manutenibilidade. Abaixo estão os principais compromissos técnicos adotados:
 
 ### 1. React Server Components (RSC) vs. Client-Side Data Fetching (SPA tradicional)
+
 - **O Porquê:** Reduzir drasticamente o JavaScript enviado ao cliente e executar regras de agregação de faturamento diretamente no servidor.
-- **O Sim (Prós):** Bundle inicial ultra-leve, proteção de regras de negócio, carregamento instantâneo (SSR) e segurança absoluta das chamadas ao banco.
+- **O Sim (Prós):** Bundle inicial reduzido, execução segura das regras no servidor e carregamento via SSR; o controle de acesso e autorização aos dados é governado pelas políticas de RLS no PostgreSQL.
 - **O Não (Riscos/Contras):** Exige segregação rigorosa de responsabilidades entre Server Components (sem hooks/eventos) e Client Components (`"use client"` pontual).
 
 ### 2. Streaming com React Suspense
+
 - **O Porquê:** A agregação de faturamento de toda a rede (KPIs) e a query da tabela paginada não devem travar a renderização inicial da página.
-- **O Sim (Prós):** O usuário recebe a casca da página e os *skeletons* de loading imediatamente via HTTP Chunked Transfer, melhorando as métricas de **LCP (Largest Contentful Paint)**.
+- **O Sim (Prós):** O usuário recebe a casca da página e os _skeletons_ de loading imediatamente via HTTP Chunked Transfer, melhorando as métricas de **LCP (Largest Contentful Paint)**.
 - **O Não (Riscos/Contras):** Exige planejamento de fallbacks visuais limpos para evitar Layout Shifts (CLS).
 
 ### 3. URL Search Params como Gerenciador de Estado
+
 - **O Porquê:** Manter busca (`?q=`), filtros (`?region=`, `?status=`) e página (`?page=`) diretamente na URL, eliminando dependência de bibliotecas de estado global como Redux ou Zustand.
 - **O Sim (Prós):** Links 100% compartilháveis (deep linking), persistência nativa no histórico do navegador (botões Voltar/Avançar funcionam) e suporte imediato a SSR em qualquer link compartilhado.
 - **O Não (Riscos/Contras):** Exige debounce controlado no cliente para não disparar requisições em excesso a cada tecla digitada.
 
 ### 4. PostgREST Injection Protection & Sanitização de Queries
+
 - **O Porquê:** O Supabase utiliza PostgREST internamente, onde caracteres especiais como `%`, `.`, `,` e operadores `.or()` podem alterar o plano de execução da query.
 - **O Sim (Prós):** Sanitização estrita em camada utilitária isolada e testada ([`src/lib/utils/query.ts`](./src/lib/utils/query.ts)), garantindo integridade e prevenção de queries maliciosas.
 - **O Não (Riscos/Contras):** Queries complexas requerem métodos de escape cuidadosos para não anular buscas válidas com acentuação ou pontuação de CNPJ.
@@ -86,14 +90,14 @@ CREATE TABLE franchise_partners (
     region VARCHAR(50) NOT NULL,
     units_count INTEGER NOT NULL DEFAULT 1 CHECK (units_count >= 0),
     annual_revenue NUMERIC(15, 2) NOT NULL DEFAULT 0.00 CHECK (annual_revenue >= 0),
-    status VARCHAR(50) NOT NULL DEFAULT 'ativo' 
+    status VARCHAR(50) NOT NULL DEFAULT 'ativo'
         CHECK (status IN ('ativo', 'negociacao', 'lead', 'inadimplente', 'cancelado')),
     account_manager VARCHAR(255) NOT NULL,
     last_interaction_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Índices B-Tree para buscas e filtros de alta frequência
+-- Índices B-Tree para filtros de região/status e índice GIN para busca textual por empresa
 CREATE INDEX idx_franchise_partners_region ON franchise_partners(region);
 CREATE INDEX idx_franchise_partners_status ON franchise_partners(status);
 CREATE INDEX idx_franchise_partners_company_search ON franchise_partners USING gin(to_tsvector('portuguese', company_name));
@@ -125,9 +129,11 @@ Test Files  3 passed (3)
 ```
 
 ### O que é coberto pela suíte:
+
 1. **[`kpi.test.ts`](./src/lib/utils/kpi.test.ts):** Cálculos de faturamento consolidado (LTV da rede), totalizador dinâmico de unidades operacionais, cálculo de ticket médio por unidade e abreviação visual corporativa (`R$ 318 mi`, `R$ 45 mil`).
 2. **[`formatters.test.ts`](./src/lib/utils/formatters.test.ts):** Formatação monetária em padrão BRL (`Intl.NumberFormat`), aplicação de máscara estrita de CNPJ (`##.###.###/####-##`) e formatação humanizada de datas no fuso horário corporativo (`pt-BR`).
 3. **[`query.test.ts`](./src/lib/utils/query.test.ts):** Remoção de caracteres maliciosos, tratamento de filtros de região/status, cálculo de offsets de paginação e prevenção contra falhas de injeção em APIs PostgREST.
 
 ---
-*Documento de referência arquitetural • Franchise Partner Hub*
+
+_Documento de referência arquitetural • Franchise Partner Hub_
