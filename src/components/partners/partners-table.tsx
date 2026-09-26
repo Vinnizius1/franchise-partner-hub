@@ -4,12 +4,11 @@ import { PaginationControls } from "@/components/partners/pagination-controls";
 import { InteractivePartnersView } from "@/components/partners/interactive-partners-view";
 import { Building2 } from "lucide-react";
 import {
-  parsePageParam,
   calculatePaginationRange,
   calculateTotalPages,
   buildSearchFilter,
 } from "@/lib/utils/query";
-
+import { parsePartnerSearchParams } from "@/lib/validations/partner.schema";
 
 interface PartnersTableProps {
   searchParams?: Promise<{
@@ -24,17 +23,12 @@ interface PartnersTableProps {
  * 🧠 [SENIOR MENTAL MODEL]: Server Component com Filtragem e Paginação no Banco
  * Em vez de buscar todos os registros e filtrar no JavaScript (inviável para big data),
  * a filtragem é delegada ao PostgreSQL via Supabase (Database-Level Filtering & Pagination),
- * consumindo os Search Params da URL de forma reativa.
+ * consumindo os Search Params da URL de forma reativa e blindada com Zod em runtime.
  */
 export async function PartnersTable({ searchParams }: PartnersTableProps) {
   const resolvedParams = searchParams ? await searchParams : {};
-  const rawSearch = resolvedParams.search;
-  const search =
-    (Array.isArray(rawSearch) ? rawSearch[0] : rawSearch)?.trim() || "";
-  const status = resolvedParams.status || "all";
-  const region = resolvedParams.region || "all";
-
-  const currentPage = parsePageParam(resolvedParams.page);
+  const { search, status, region, page: currentPage } =
+    parsePartnerSearchParams(resolvedParams);
   const { from, to, pageSize } = calculatePaginationRange(currentPage);
 
   const supabase = await createClient();

@@ -16,7 +16,8 @@ Para garantir estabilidade corporativa, compatibilidade com pipelines modernos e
 | **TypeScript** | `^5.0.0` | Linguagem & Tipagem | Modo estrito (`strict: true`), zero uso de `any`, tipagem espelhada diretamente do DDL relacional. |
 | **@supabase/ssr** | `^0.12.7` | Cliente Supabase Server | Gerenciamento seguro de cookies e autenticação adaptada para o runtime serverless do Next.js. |
 | **@supabase/supabase-js** | `^2.117.0` | Driver PostgREST | Acesso tipado ao PostgreSQL com suporte nativo a Row-Level Security e connection pooling. |
-| **Vitest** | `^5.0.1` | Suíte de Testes Unitários | Runner de testes ultra-rápido baseado em Vite/ESM (feedback loop de ~260ms para 35 testes). |
+| **Vitest** | `^5.0.2` | Suíte de Testes Unitários | Runner de testes ultra-rápido baseado em Vite/ESM (feedback loop de ~350ms para 46 testes). |
+| **Zod** | `^4.x` | Runtime Boundary Validation | Validação e coerção estrita em runtime para Search Params da URL e mutações com Server Actions. |
 | **Tailwind CSS** | `^4.0.0` | Engine de Estilização | Estilização utilitária de alta densidade visual (Dark Mode corporativo) com zero overhead em runtime. |
 | **use-debounce** | `^10.1.1` | Otimização de Entrada | Debounce reativo de 300ms nos inputs de busca para mitigação de sobrecarga no backend. |
 | **Lucide React** | `^1.47.0` | Design System de Ícones | Ícones SVG otimizados para dashboards corporativos com zero impacto no First Contentful Paint. |
@@ -25,23 +26,25 @@ Para garantir estabilidade corporativa, compatibilidade com pipelines modernos e
 
 ## 🧪 2. Engenharia de Testes Automatizados (Vitest)
 
-A aplicação segue a metodologia de **TDD / Feedback Rápido**, com uma suíte de **35 testes unitários** automatizados e 100% aprovados em ~260ms:
+A aplicação segue a metodologia de **TDD / Feedback Rápido**, com uma suíte de **46 testes unitários** automatizados e 100% aprovados em ~350ms:
 
 ```bash
  ✓ src/lib/utils/kpi.test.ts (10 tests)
  ✓ src/lib/utils/query.test.ts (16 tests)
  ✓ src/lib/utils/formatters.test.ts (9 tests)
+ ✓ src/lib/validations/partner.schema.test.ts (11 tests)
 
- Test Files  3 passed (3)
-      Tests  35 passed (35)
-   Duration  ~260ms
+ Test Files  4 passed (4)
+      Tests  46 passed (46)
+   Duration  ~350ms
 ```
 
 ### O que é coberto pela suíte:
 
-1. **[`kpi.test.ts`](./src/lib/utils/kpi.test.ts):** Cálculos de faturamento consolidado (LTV da rede), totalizador dinâmico de unidades operacionais, cálculo de ticket médio por unidade e abreviação visual compacta (`R$ 318 mi`, `R$ 45 mil`).
-2. **[`formatters.test.ts`](./src/lib/utils/formatters.test.ts):** Formatação monetária em padrão BRL (`Intl.NumberFormat`), aplicação de máscara estrita de CNPJ (`##.###.###/####-##`) e formatação humanizada de datas no fuso horário corporativo (`pt-BR`).
-3. **[`query.test.ts`](./src/lib/utils/query.test.ts):** Escape de aspas e barras delimitadoras, tratamento de filtros de região/status, cálculo de offsets de paginação e prevenção contra falhas de injeção em APIs PostgREST.
+1. **[`kpi.test.ts`](../src/lib/utils/kpi.test.ts):** Cálculos de faturamento consolidado (LTV da rede), totalizador dinâmico de unidades operacionais, cálculo de ticket médio por unidade e abreviação visual compacta (`R$ 318 mi`, `R$ 45 mil`).
+2. **[`formatters.test.ts`](../src/lib/utils/formatters.test.ts):** Formatação monetária em padrão BRL (`Intl.NumberFormat`), aplicação de máscara estrita de CNPJ (`##.###.###/####-##`) e formatação humanizada de datas no fuso horário corporativo (`pt-BR`).
+3. **[`query.test.ts`](../src/lib/utils/query.test.ts):** Escape de aspas e barras delimitadoras, tratamento de filtros de região/status, cálculo de offsets de paginação e prevenção contra falhas de injeção em APIs PostgREST.
+4. **[`partner.schema.test.ts`](../src/lib/validations/partner.schema.test.ts):** Validação defensiva com Zod na fronteira de dados: coerção de tipos da URL, fallback resiliente contra termos maliciosos, rejeição de entradas não-decimais (`0x10`, `1e3`) e validação de UUIDs/Status para mutações.
 
 ---
 

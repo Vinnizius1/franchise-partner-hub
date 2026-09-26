@@ -116,23 +116,25 @@ CREATE POLICY "Allow public read access to active partners"
 
 ## 🧪 Engenharia de Testes Automatizados (Vitest)
 
-A aplicação segue a metodologia de **TDD / Feedback Rápido**, com uma suíte de **35 testes unitários** automatizados e 100% aprovados:
+A aplicação segue a metodologia de **TDD / Feedback Rápido**, com uma suíte de **46 testes unitários** automatizados e 100% aprovados:
 
 ```bash
 ✓ src/lib/utils/kpi.test.ts (10 tests)
 ✓ src/lib/utils/query.test.ts (16 tests)
 ✓ src/lib/utils/formatters.test.ts (9 tests)
+✓ src/lib/validations/partner.schema.test.ts (11 tests)
 
-Test Files  3 passed (3)
-     Tests  35 passed (35)
-  Duration  ~260ms
+Test Files  4 passed (4)
+     Tests  46 passed (46)
+  Duration  ~350ms
 ```
 
 ### O que é coberto pela suíte:
 
-1. **[`kpi.test.ts`](./src/lib/utils/kpi.test.ts):** Cálculos de faturamento consolidado (LTV da rede), totalizador dinâmico de unidades operacionais, cálculo de ticket médio por unidade e abreviação visual corporativa (`R$ 318 mi`, `R$ 45 mil`).
-2. **[`formatters.test.ts`](./src/lib/utils/formatters.test.ts):** Formatação monetária em padrão BRL (`Intl.NumberFormat`), aplicação de máscara estrita de CNPJ (`##.###.###/####-##`) e formatação humanizada de datas no fuso horário corporativo (`pt-BR`).
-3. **[`query.test.ts`](./src/lib/utils/query.test.ts):** Escape de aspas e barras delimitadoras, tratamento de filtros de região/status, cálculo de offsets de paginação e prevenção contra falhas de injeção em APIs PostgREST.
+1. **[`kpi.test.ts`](../src/lib/utils/kpi.test.ts):** Cálculos de faturamento consolidado (LTV da rede), totalizador dinâmico de unidades operacionais, cálculo de ticket médio por unidade e abreviação visual corporativa (`R$ 318 mi`, `R$ 45 mil`).
+2. **[`formatters.test.ts`](../src/lib/utils/formatters.test.ts):** Formatação monetária em padrão BRL (`Intl.NumberFormat`), aplicação de máscara estrita de CNPJ (`##.###.###/####-##`) e formatação humanizada de datas no fuso horário corporativo (`pt-BR`).
+3. **[`query.test.ts`](../src/lib/utils/query.test.ts):** Escape de aspas e barras delimitadoras, tratamento de filtros de região/status, cálculo de offsets de paginação e prevenção contra falhas de injeção em APIs PostgREST.
+4. **[`partner.schema.test.ts`](../src/lib/validations/partner.schema.test.ts):** Validação em tempo de execução (Zod) de parâmetros de busca na URL (rejeitando entradas não-decimais como hexadecimais `0x10`, termos maliciosos, números negativos e páginas corrompidas) e blindagem de contratos de mutação com UUIDs para Server Actions.
 
 ---
 

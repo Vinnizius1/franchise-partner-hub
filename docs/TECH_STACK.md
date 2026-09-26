@@ -24,8 +24,8 @@ Este documento registra as versões exatas e validadas utilizadas no projeto, ga
 
 - **URL State**: Nativo Next.js (`useSearchParams`, `usePathname`, `useRouter`, `useTransition`) + `use-debounce` (^10.1.1). *(Nota arquitetural: `nuqs` é a recomendação de mercado para cenários com múltiplos formulários de busca complexos).*
 - **Validação de Tipos**: TypeScript Strict Contracts (`src/types/partner.types.ts`).
-- **Validação em Runtime (Planejada)**: `zod` (reservado para a camada de mutação de dados via Server Actions e validação de formulários).
+- **Validação em Runtime**: `zod` (^4.x - Runtime Boundary Validation para URL Search Params com defesa resiliente e schemas para Server Actions).
 
 ## Testes & Qualidade
 
-- **Test Runner**: Vitest ^5.0.2 (35 testes unitários e de integração de lógica)
+- **Test Runner**: Vitest ^5.0.2 (46 testes unitários e de integração de lógica)

@@ -11,7 +11,7 @@
 [![React 19](https://img.shields.io/badge/React-19.2.8-blue?style=for-the-badge&logo=react)](https://react.dev/)
 [![TypeScript 5](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com/)
-[![Vitest](https://img.shields.io/badge/Vitest-35%20Tests%20Passing-6E9F18?style=for-the-badge&logo=vitest)](https://vitest.dev/)
+[![Vitest](https://img.shields.io/badge/Vitest-46%20Tests%20Passing-6E9F18?style=for-the-badge&logo=vitest)](https://vitest.dev/)
 [![Vercel Deployed](https://img.shields.io/badge/Deploy-Vercel%20Production-000000?style=for-the-badge&logo=vercel)](https://franchise-partner-hub.vercel.app)
 [![Node LTS](https://img.shields.io/badge/Node.js-v22%20LTS-339933?style=for-the-badge&logo=node.js)](https://nodejs.org/)
 
@@ -46,7 +46,7 @@ Em redes com dezenas a centenas de marcas parceiras (como Burger King, O Boticá
 Para manter este `README` focado na visão executiva e de produto, os detalhes de engenharia e modelagem foram segregados em documentos especializados:
 
 - 🏛️ [**ARCHITECTURE.md**](./docs/ARCHITECTURE.md): Análise aprofundada dos trade-offs técnicos (RSC vs. SPA, Streaming Suspense, Estado na URL, Sanitização de Queries PostgREST) e Script DDL relacional do PostgreSQL com índices e políticas de RLS.
-- ⚙️ [**ENGINEERING.md**](./docs/ENGINEERING.md): Matriz de tecnologias corporativas LTS (Stack 2026), engenharia da suíte de 35 testes automatizados (Vitest) e módulos conceituais de engenharia.
+- ⚙️ [**ENGINEERING.md**](./docs/ENGINEERING.md): Matriz de tecnologias corporativas LTS (Stack 2026), engenharia da suíte de 46 testes automatizados (Vitest) e módulos conceituais de engenharia.
 
 ---
 
