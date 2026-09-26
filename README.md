@@ -20,9 +20,7 @@
 ## 📌 Links Rápidos do Projeto
 
 - 🚀 **Aplicação em Produção (Live Demo):** [https://franchise-partner-hub.vercel.app](https://franchise-partner-hub.vercel.app)
-- 📁 **Repositório Oficial:** [github.com/Vinnizius1/franchise-partner-hub](https://github.com/Vinnizius1/franchise-partner-hub)
 - 🏛️ **Arquitetura & Trade-offs:** [ARCHITECTURE.md](./ARCHITECTURE.md)
-- 👨‍💻 **Autor:** Vinicius Matos de Mendonça ([GitHub](https://github.com/Vinnizius1))
 - 🎯 **Objetivo:** Demonstração prática e arquitetural para o case do **Grupo BITTENCOURT**
 
 ---
