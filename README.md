@@ -20,8 +20,8 @@
 ## 📌 Links Rápidos do Projeto
 
 - 🚀 **Aplicação em Produção (Live Demo):** [https://franchise-partner-hub.vercel.app](https://franchise-partner-hub.vercel.app)
-- 🏛️ **Arquitetura & Trade-offs:** [ARCHITECTURE.md](./ARCHITECTURE.md)
-- ⚙️ **Engenharia & Matriz Tecnológica:** [ENGINEERING.md](./ENGINEERING.md)
+- 🏛️ **Arquitetura & Trade-offs:** [ARCHITECTURE.md](./docs/ARCHITECTURE.md)
+- ⚙️ **Engenharia & Matriz Tecnológica:** [ENGINEERING.md](./docs/ENGINEERING.md)
 - 🎯 **Objetivo:** Demonstração prática e arquitetural para o case do **Grupo BITTENCOURT**
 
 ---
@@ -45,8 +45,8 @@ Em redes com dezenas a centenas de marcas parceiras (como Burger King, O Boticá
 
 Para manter este `README` focado na visão executiva e de produto, os detalhes de engenharia e modelagem foram segregados em documentos especializados:
 
-- 🏛️ [**ARCHITECTURE.md**](./ARCHITECTURE.md): Análise aprofundada dos trade-offs técnicos (RSC vs. SPA, Streaming Suspense, Estado na URL, Sanitização de Queries PostgREST) e Script DDL relacional do PostgreSQL com índices e políticas de RLS.
-- ⚙️ [**ENGINEERING.md**](./ENGINEERING.md): Matriz de tecnologias corporativas LTS (Stack 2026), engenharia da suíte de 35 testes automatizados (Vitest) e módulos conceituais de engenharia.
+- 🏛️ [**ARCHITECTURE.md**](./docs/ARCHITECTURE.md): Análise aprofundada dos trade-offs técnicos (RSC vs. SPA, Streaming Suspense, Estado na URL, Sanitização de Queries PostgREST) e Script DDL relacional do PostgreSQL com índices e políticas de RLS.
+- ⚙️ [**ENGINEERING.md**](./docs/ENGINEERING.md): Matriz de tecnologias corporativas LTS (Stack 2026), engenharia da suíte de 35 testes automatizados (Vitest) e módulos conceituais de engenharia.
 
 ---
 
