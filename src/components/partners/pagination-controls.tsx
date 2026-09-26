@@ -41,7 +41,7 @@ export function PaginationControls({
   const endRecord = Math.min(currentPage * pageSize, totalCount);
 
   return (
-    <div className="px-6 py-4 border-t border-zinc-800 bg-zinc-900/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+    <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-t border-zinc-800 bg-zinc-900/30 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs">
       <div className="text-zinc-400">
         Mostrando{" "}
         <span className="font-mono font-medium text-zinc-200">

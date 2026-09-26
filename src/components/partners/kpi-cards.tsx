@@ -37,58 +37,58 @@ export async function KpiCards() {
   const totalRevenue = calculateTotalRevenue(partners);
 
   return (
-    <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {/* 1. Total de Redes */}
-      <div className="p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
-        <div className="flex items-center justify-between text-zinc-400 mb-2">
-          <span className="text-xs font-medium">Franquias na Rede</span>
-          <Building2 className="w-4 h-4 text-blue-400" />
+      <div className="p-3.5 sm:p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
+        <div className="flex items-center justify-between text-zinc-400 mb-1.5 sm:mb-2">
+          <span className="text-[11px] sm:text-xs font-medium truncate">Franquias na Rede</span>
+          <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400 shrink-0" />
         </div>
-        <div className="text-2xl font-bold font-mono text-zinc-100">
+        <div className="text-xl sm:text-2xl font-bold font-mono text-zinc-100">
           {totalPartners}
         </div>
-        <p className="text-[11px] text-zinc-500 mt-1">
-          Total derivado dinamicamente do banco
+        <p className="text-[10px] sm:text-[11px] text-zinc-500 mt-1 truncate">
+          Total derivado do banco
         </p>
       </div>
 
       {/* 2. Faturamento Total */}
-      <div className="p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
-        <div className="flex items-center justify-between text-zinc-400 mb-2">
-          <span className="text-xs font-medium">
-            Faturamento Total Gerenciado
+      <div className="p-3.5 sm:p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
+        <div className="flex items-center justify-between text-zinc-400 mb-1.5 sm:mb-2">
+          <span className="text-[11px] sm:text-xs font-medium truncate">
+            Faturamento Total
           </span>
-          <TrendingUp className="w-4 h-4 text-emerald-400" />
+          <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 shrink-0" />
         </div>
-        <div className="text-2xl font-bold font-mono text-emerald-400">
+        <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-400 truncate">
           {formatBRLCurrencyCompact(totalRevenue)}
         </div>
-        <p className="text-[11px] text-zinc-500 mt-1">
-          Volume anual de LTV consolidado
+        <p className="text-[10px] sm:text-[11px] text-zinc-500 mt-1 truncate">
+          Volume de LTV consolidado
         </p>
       </div>
 
       {/* 3. Segurança RLS */}
-      <div className="p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
-        <div className="flex items-center justify-between text-zinc-400 mb-2">
-          <span className="text-xs font-medium">Segurança de Dados</span>
-          <ShieldCheck className="w-4 h-4 text-indigo-400" />
+      <div className="p-3.5 sm:p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
+        <div className="flex items-center justify-between text-zinc-400 mb-1.5 sm:mb-2">
+          <span className="text-[11px] sm:text-xs font-medium truncate">Segurança de Dados</span>
+          <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-400 shrink-0" />
         </div>
-        <div className="text-2xl font-bold text-zinc-100">RLS Ativo</div>
-        <p className="text-[11px] text-zinc-500 mt-1">
-          Políticas de leitura e atualização no Postgres
+        <div className="text-xl sm:text-2xl font-bold text-zinc-100 truncate">RLS Ativo</div>
+        <p className="text-[10px] sm:text-[11px] text-zinc-500 mt-1 truncate">
+          Políticas no Postgres
         </p>
       </div>
 
       {/* 4. Arquitetura RSC */}
-      <div className="p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
-        <div className="flex items-center justify-between text-zinc-400 mb-2">
-          <span className="text-xs font-medium">Arquitetura de Entrega</span>
-          <Zap className="w-4 h-4 text-amber-400" />
+      <div className="p-3.5 sm:p-5 rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur">
+        <div className="flex items-center justify-between text-zinc-400 mb-1.5 sm:mb-2">
+          <span className="text-[11px] sm:text-xs font-medium truncate">Arquitetura</span>
+          <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
         </div>
-        <div className="text-2xl font-bold text-zinc-100">RSC + Streaming</div>
-        <p className="text-[11px] text-zinc-500 mt-1">
-          Largest Contentful Paint imediato via Suspense
+        <div className="text-xl sm:text-2xl font-bold text-zinc-100 truncate">RSC + Stream</div>
+        <p className="text-[10px] sm:text-[11px] text-zinc-500 mt-1 truncate">
+          LCP veloz via Suspense
         </p>
       </div>
     </section>
