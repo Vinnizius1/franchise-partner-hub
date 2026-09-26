@@ -123,21 +123,6 @@ npm start
 
 ---
 
-## 🎯 6. Recursos de Demonstração & Dossiê Interativo
-
-Para proporcionar aos avaliadores do Grupo BITTENCOURT uma experiência de produto completa e interativa (sem a fricção de exigir autenticação de login nesta POC):
-
-1. **Dossiê Estratégico do Parceiro Franqueado (Modal Interativo):**
-   - Ao clicar em qualquer linha da tabela de parceiros (`<tr>`) ou no botão acessível **"Ver Ficha >"**, abre-se o **Dossiê Executivo** com:
-     - Ficha cadastral detalhada (Razão Social, CNPJ formatado, segmento e status).
-     - Métricas de BI calculadas: Faturamento Anual (LTV), contagem de unidades e **Ticket Médio por Franquia** (`faturamento / unidades`).
-     - Governança corporativa: Gestor de conta responsável, data da última auditoria e badge de conformidade com PostgreSQL RLS.
-     - Ações rápidas com feedback imediato: **Copiar Ficha Cadastral** (área de transferência) e **Simular Contato com o Gestor**.
-2. **Apresentação Executiva do Case (Header):**
-   - Botão **"Sobre o Case"** no topo da aplicação com animação convidativa efêmera (*Feature Discovery Beacon*), resumindo a proposta de valor para o Grupo BITTENCOURT, os diferenciais técnicos e o guia de navegação.
-
----
-
 ## 📚 7. Fundamentos Técnicos & Decisões de Engenharia
 
 Os conceitos fundamentais de arquitetura, boas práticas e decisões de engenharia de software foram estruturados em módulos de referência:
