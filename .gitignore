@@ -46,3 +46,5 @@ next-env.d.ts
 BITTENCOURT_PREP.md
 *.pdf
 
+# local agent customizations
+.agents/
