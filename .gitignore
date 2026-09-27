@@ -45,6 +45,8 @@ next-env.d.ts
 # private study & prep notes
 BITTENCOURT_PREP.md
 *.pdf
+docs/CODERABBIT_MASTERCLASS.md
+docs/coderabbit_masterclass.html
 
 # local agent customizations
 .agents/
